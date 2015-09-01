@@ -34,6 +34,7 @@
 //! Contains all elements for controlling Icom devices
 namespace Icom
 {
+   typedef std::vector<unsigned char> Buffer;
    enum Status {INCOMPLETE, FAIL, SUCCESS};
 
    //! Base class for any Icom CI-V commands
@@ -47,8 +48,6 @@ namespace Icom
    class Command_base
    {
    public:
-      typedef std::vector<unsigned char> Buffer;
-
       //! Retrieve command buffer
       /*!
        * @return  Constant reference to vector of command data string.
@@ -96,11 +95,11 @@ namespace Icom
             unsigned char destination,
             unsigned char source);
 
-      Status m_status;              //!< Current status of command
-      unsigned char m_destination;  //!< Address of destination device
-      unsigned char m_source;       //!< Address of source device
-      const size_t headerSize=4;    //!< Size of header in bytes
-      const size_t footerSize=1;    //!< Size of footer in bytes
+      Status m_status;                   //!< Current status of command
+      unsigned char m_destination;       //!< Address of destination device
+      unsigned char m_source;            //!< Address of source device
+      static const size_t headerSize=4;  //!< Size of header in bytes
+      static const size_t footerSize=1;  //!< Size of footer in bytes
 
       Buffer::iterator commandStart()
       {
@@ -132,9 +131,14 @@ namespace Icom
        */
       void subComplete() =0;
 
+      virtual bool done()
+      {
+         return true;
+      }
+
    private:
-      Buffer m_command;             //!< Buffer with actual command data
-      Buffer m_result;              //!< Buffer with command result
+      Buffer m_command;  //!< Buffer with actual command data
+      Buffer m_result;   //!< Buffer with command result
    };
 
    typedef std::shared_ptr<Command_base> Command;
