@@ -1,5 +1,1 @@
-*.log
-*.rpt
 *.swp
-__pycache__
-hardware/output
