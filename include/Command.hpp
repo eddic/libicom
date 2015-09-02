@@ -31,15 +31,18 @@
 #include <vector>
 #include <memory>
 
-//! Contains all elements for controlling Icom devices
+//! Contains all elements for controlling %Icom devices
 namespace Icom
 {
+   //! Container type for command and result buffers
    typedef std::vector<unsigned char> Buffer;
+
+   //! Enumeration for indicating command status
    enum Status {INCOMPLETE, FAIL, SUCCESS};
 
-   //! Base class for any Icom CI-V commands
+   //! Base class for any %Icom CI-V commands
    /*!
-    * This class should be derived from to implement any Icom CI-V control
+    * This class should be derived from to implement any %Icom CI-V control
     * commands.
     *
     * @date    September 1, 2015
@@ -50,7 +53,7 @@ namespace Icom
    public:
       //! Retrieve command buffer
       /*!
-       * @return  Constant reference to vector of command data string.
+       * @return  Constant reference command data buffer.
        * @date    September 1, 2015
        * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
        */
@@ -72,7 +75,7 @@ namespace Icom
 
       //! Complete the command
       /*!
-       * Calling this function forces a process of the result data buffer.
+       * Calling this initiates the processing of the result data buffer.
        *
        * @date    September 1, 2015
        * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
@@ -89,11 +92,22 @@ namespace Icom
 
       virtual ~Command_base() {}
    protected:
+      //! Sole constructor
+      /*!
+       * @param   [in] commandSize The size, in bytes, of the command. This does
+       *                           not include the header and footer components
+       *                           as they are handled by this class.
+       * @param   [in] resultSize The size, in bytes, of the result. This does
+       *                          not include the header and footer components
+       *                          as they are handled by this class.
+       * @param   [in] destination The CI-V address of the destination device.
+       * @param   [in] source The CI-V address of the source controller.
+       */
       Command_base(
-            size_t commandSize,
-            size_t resultSize,
-            unsigned char destination,
-            unsigned char source);
+            const size_t commandSize,
+            const size_t resultSize,
+            const unsigned char destination,
+            const unsigned char source);
 
       Status m_status;                   //!< Current status of command
       unsigned char m_destination;       //!< Address of destination device
@@ -101,21 +115,25 @@ namespace Icom
       static const size_t headerSize=4;  //!< Size of header in bytes
       static const size_t footerSize=1;  //!< Size of footer in bytes
 
+      //! Starting command iterator for children
       Buffer::iterator commandStart()
       {
          return m_command.begin()+headerSize;
       }
 
+      //! Ending command iterator for children
       Buffer::iterator commandEnd()
       {
          return m_command.end()-footerSize;
       }
 
+      //! Starting result iterator for children
       Buffer::const_iterator resultStart() const
       {
          return m_result.cbegin()+headerSize;
       }
 
+      //! Ending result iterator for children
       Buffer::const_iterator resultEnd() const
       {
          return m_result.cend()-footerSize;
@@ -123,7 +141,7 @@ namespace Icom
 
       //! %Command specific completion
       /*!
-       * Calling this function forces the childc class to process the result
+       * Calling this function forces the child class to process the result
        * data buffer.
        *
        * @date    September 1, 2015
@@ -131,6 +149,13 @@ namespace Icom
        */
       void subComplete() =0;
 
+      //! Check to see if the command is actually done
+      /*!
+       * We use this virtual function for commands that may require multiple
+       * executions before they are actually complete. One example of this being
+       * usefull is for polling the squelch status of the reciever and not being
+       * "done" until it is either open or close.
+       */
       virtual bool done()
       {
          return true;
@@ -141,6 +166,7 @@ namespace Icom
       Buffer m_result;   //!< Buffer with command result
    };
 
+   //! Shared pointer holder for commands.
    typedef std::shared_ptr<Command_base> Command;
 }
 

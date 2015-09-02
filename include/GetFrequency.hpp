@@ -32,10 +32,10 @@
 
 #include "Command.hpp"
 
-//! Contains all elements for controlling Icom devices
+//! Contains all elements for controlling %Icom devices
 namespace Icom
 {
-   //! Retrieve the operating frequency of an Icom CI-V device
+   //! Retrieve the operating frequency of an %Icom CI-V device
    /*!
     * @date    September 1, 2015
     * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
@@ -67,8 +67,8 @@ namespace Icom
 
       //! Construct the command object
       /*!
-       * @param   [in] destination Destination device address
-       * @param   [in] source Source controller address
+       * @param   [in] destination Destination device CI-V address
+       * @param   [in] source Source controller CI-V address
        * @date    September 1, 2015
        * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
        */
