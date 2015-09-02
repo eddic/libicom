@@ -2,7 +2,7 @@
  * @file       GetFrequency.hpp
  * @brief      Declares the Icom::GetFrequency class
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date       September 1, 2015
+ * @date       September 2, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
  *             under the GNU General Public License Version 3.
  */
@@ -37,7 +37,7 @@ namespace Icom
 {
    //! Retrieve the operating frequency of an %Icom CI-V device
    /*!
-    * @date    September 1, 2015
+    * @date    September 2, 2015
     * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
     */
    class GetFrequency: public Command_base
@@ -48,11 +48,11 @@ namespace Icom
        * Calling this function forces the child class to process the result data
        * buffer into the actual operating frequency.
        *
-       * @return  Reference to vector of command data string.
-       * @date    September 1, 2015
+       * @return  Always true.
+       * @date    September 2, 2015
        * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
        */
-      void subComplete();
+      bool complete();
 
       //! Retrieve the operating frequency
       /*!
@@ -69,7 +69,7 @@ namespace Icom
       /*!
        * @param   [in] destination Destination device CI-V address
        * @param   [in] source Source controller CI-V address
-       * @date    September 1, 2015
+       * @date    September 2, 2015
        * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
        */
       GetFrequency(
@@ -77,7 +77,8 @@ namespace Icom
             unsigned char source=0xe0);
        
    private:
-      unsigned int m_frequency;  //!< Retrieved operating frequency
+      unsigned int m_frequency;              //!< Retrieved operating frequency
+      static const unsigned char code=0x03;  //!< Command code
    };
 }
 

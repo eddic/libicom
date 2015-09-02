@@ -1,6 +1,6 @@
 /*!
- * @file       GetFrequency.cpp
- * @brief      Defines the Icom::GetFrequency class
+ * @file       getBCD.cpp
+ * @brief      Defines the Icom::getBCD function
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
  * @date       September 2, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
@@ -25,36 +25,33 @@
  * The %Icom CI-V Control Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <limits>
-
-#include "GetFrequency.hpp"
 #include "getBCD.hpp"
 
-void Icom::GetFrequency::complete()
+uint64_t Icom::getBCD(
+      Buffer::const_iterator start,
+      Buffer::const_iterator end)
 {
-   m_frequency=0;
+   if(end-start>10)
+      return 0;
 
-   if(m_result.size() && m_result.front() == code)
+   uint64_t total=0;
+   uint64_t multiplier=1;
+   uint64_t digit;
+
+   for(Buffer::const_iterator number=start; number != end; ++number)
    {
-      const uint64_t bigBCD = getBCD(m_result.begin()+1, m_result.end());
-
-      if(bigBCD <= uint64_t(std::numeric_limits<unsigned int>))
-         m_frequency = (unsigned int)bigBCD;
+      digit = (*number&0x0f);
+      if(digit>9)
+         return 0;
+      total += digit*(multiplier);
+      multiplier *= 10;
+      
+      digit = (*number>>4);
+      if(digit>9)
+         return 0;
+      total += digit*(multiplier);
+      multiplier *= 10;
    }
 
-   if(m_frequency)
-      m_status=SUCCESS;
-   else
-      m_status=FAIL;
-
-   return true;
-}
-
-Icom::GetFrequency::GetFrequency(
-      unsigned char destination,
-      unsigned char source):
-   Command_base(destination, source),
-   m_frequency(0)
-{
-   m_command.push_back(code);
+   return total;
 }

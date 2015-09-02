@@ -117,35 +117,94 @@ Icom::Controller::~Controller()
 
 void Icom::Controller::Execute(Command& command)
 {
-   const Buffer& commandBuffer=command->commandData();
-   Buffer& resultBuffer=command->resultData();
+   Buffer& buffer=command->resultData();
 
    do
    {
-      ssize_t position=0;
-      while(position < commandBuffer.size())
+      // Send the command
+      const Buffer header={
+            Command::header,
+            Command::header,
+            command.destination,
+            command.source};
+      put(header);
+      put(command->commandData());
+      put(Command::footer);
+
+      // Get the reply
+      bool notForUs=false;
+      unsigned int state=0;
+      unsigned char buffer;
+      while(state<5)
       {
-         const ssize_t n = write(
-               fd, 
-               &commandBuffer.font()+position, 
-               commandBuffer.size()-position);
-         if(n < 0)
+         buffer=get();
+
+         switch(state)
+         {
+            case 0:
+            case 1:
+               if(buffer!=Command::header)
+                  throw;
+               ++state;
+               break;
+            case 2:
+               if(buffer!=command.source)
+                  notForUs=true;
+               ++state;
+               break;
+            case 3:
+               if(buffer!=command.destination)
+                  notForUs=true;
+               ++state;
+               break;
+            case 4:
+               if(buffer != Command::footer)
+                  command->resultData().push_back(buffer);
+               else
+                  ++state;
+               break;
+         }
+
+         // We don't want to recieve a giant reply
+         if(command->resultData().size() >= Command::bufferReserveSize)
             throw;
-         position += n;
       }
 
-      position=0;
-      while(position < resultBuffer.size())
-      {
-         const ssize_t n = read(
-               fd,
-               &resultBuffer.front+position,
-               resultBuffer.size()-position);
-         if(n < 0)
-            throw;
-         position += n;
-      }
+   } while(notForUs || !command->complete());
+}
 
-      command->complete();
-   } while(!command->done());
+unsigned char Icom::Controller::get()
+{
+   unsigned char x;
+   ssize_t n=0;
+   while(n==0)
+      n = read(fd, &x, 1);
+   if(n < 0)
+      throw;
+   return x;
+}
+
+void Icom::Controller::put(const Buffer data)
+{
+   ssize_t position=0;
+   const ssize_t n;
+   while(position < data.size())
+   {
+      n = write(
+            fd, 
+            &data.font()+position, 
+            data.size()-position);
+      if(n < 0)
+         throw;
+      position += n;
+   }
+}
+
+void Icom::Controller::put(const unsigned char byte)
+{
+   ssize_t n=0;
+   while(n==0)
+      n = write(fd, &byte, 1);
+   if(n < 0)
+      throw;
 }

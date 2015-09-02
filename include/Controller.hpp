@@ -62,6 +62,15 @@ namespace Icom
       void Execute(Command& command);
    private:
       int fd;  //!< File descriptor of serial port.
+
+      //! Retrieve a byte from the serial port
+      inline unsigned char get();
+
+      //! Send a string of bytes down the serial port
+      inline void put(const Buffer data);
+
+      //! Send a byte down the serial port
+      inline void put(const unsigned char byte);
    };
 }
 

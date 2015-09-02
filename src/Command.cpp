@@ -2,7 +2,7 @@
  * @file       Command.cpp
  * @brief      Defines the Icom::Command class
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date       September 1, 2015
+ * @date       September 2, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
  *             under the GNU General Public License Version 3.
  */
@@ -46,15 +46,10 @@ Icom::Command_base(
       const size_t resultSize,
       const unsigned char destination,
       const unsigned char source):
-   m_command(commandSize+headerSize+footerSize, 0),
-   m_result(resultSize+headerSize+footerSize, 0),
-   m_status(INCOMPLETE),
    m_destination(destination),
-   m_source(source)
+   m_source(source),
+   m_status(INCOMPLETE)
 {
-   m_command[0] = 0xfe;
-   m_command[1] = 0xfe;
-   m_command[2] = m_destination;
-   m_command[3] = m_source;
-   m_command.back() = 0xfd;
+   m_command.reserve(bufferReserveSize);
+   m_result.reserve(bufferReserveSize);
 }

@@ -2,7 +2,7 @@
  * @file       Command.hpp
  * @brief      Declares the Icom::Command class
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date       September 1, 2015
+ * @date       September 2, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
  *             under the GNU General Public License Version 3.
  */
@@ -45,7 +45,7 @@ namespace Icom
     * This class should be derived from to implement any %Icom CI-V control
     * commands.
     *
-    * @date    September 1, 2015
+    * @date    September 2, 2015
     * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
     */
    class Command_base
@@ -91,77 +91,42 @@ namespace Icom
       Status status() const { return m_status; }
 
       virtual ~Command_base() {}
+
+      static const unsigned char footer=0xfd;
+      static const unsigned char header=0xfe;
+      static const size_t bufferReserveSize=64;
+      const unsigned char m_destination;  //!< Address of destination device
+      const unsigned char m_source;       //!< Address of source device
    protected:
       //! Sole constructor
       /*!
-       * @param   [in] commandSize The size, in bytes, of the command. This does
-       *                           not include the header and footer components
-       *                           as they are handled by this class.
-       * @param   [in] resultSize The size, in bytes, of the result. This does
-       *                          not include the header and footer components
-       *                          as they are handled by this class.
        * @param   [in] destination The CI-V address of the destination device.
        * @param   [in] source The CI-V address of the source controller.
+       * @date    September 2, 2015
+       * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
        */
       Command_base(
-            const size_t commandSize,
-            const size_t resultSize,
             const unsigned char destination,
             const unsigned char source);
 
-      Status m_status;                   //!< Current status of command
-      unsigned char m_destination;       //!< Address of destination device
-      unsigned char m_source;            //!< Address of source device
-      static const size_t headerSize=4;  //!< Size of header in bytes
-      static const size_t footerSize=1;  //!< Size of footer in bytes
-
-      //! Starting command iterator for children
-      Buffer::iterator commandStart()
-      {
-         return m_command.begin()+headerSize;
-      }
-
-      //! Ending command iterator for children
-      Buffer::iterator commandEnd()
-      {
-         return m_command.end()-footerSize;
-      }
-
-      //! Starting result iterator for children
-      Buffer::const_iterator resultStart() const
-      {
-         return m_result.cbegin()+headerSize;
-      }
-
-      //! Ending result iterator for children
-      Buffer::const_iterator resultEnd() const
-      {
-         return m_result.cend()-footerSize;
-      }
+      Status m_status;                    //!< Current status of command
 
       //! %Command specific completion
       /*!
        * Calling this function forces the child class to process the result
-       * data buffer.
+       * data buffer. Normally just return "true".
        *
+       * We also use this virtual function for commands that may require
+       * multiple executions before they are actually complete. One example of
+       * this being useful is for polling the squelch status of the receiver
+       * and not being "done" until it is either open or close.
+       *
+       * @return  "false" if command should be run again. "true" otherwise.
        * @date    September 1, 2015
        * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
        */
-      void subComplete() =0;
+      virtual bool complete() =0;
 
-      //! Check to see if the command is actually done
-      /*!
-       * We use this virtual function for commands that may require multiple
-       * executions before they are actually complete. One example of this being
-       * usefull is for polling the squelch status of the reciever and not being
-       * "done" until it is either open or close.
-       */
-      virtual bool done()
-      {
-         return true;
-      }
-
-   private:
       Buffer m_command;  //!< Buffer with actual command data
       Buffer m_result;   //!< Buffer with command result
    };
