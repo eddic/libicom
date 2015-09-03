@@ -2,7 +2,7 @@
  * @file       Command.hpp
  * @brief      Declares the Icom::Command class
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date       September 2, 2015
+ * @date       September 3, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
  *             under the GNU General Public License Version 3.
  */
@@ -45,7 +45,7 @@ namespace Icom
     * This class should be derived from to implement any %Icom CI-V control
     * commands.
     *
-    * @date    September 2, 2015
+    * @date    September 3, 2015
     * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
     */
    class Command_base
@@ -73,15 +73,6 @@ namespace Icom
          return m_result;
       }
 
-      //! Complete the command
-      /*!
-       * Calling this initiates the processing of the result data buffer.
-       *
-       * @date    September 1, 2015
-       * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-       */
-      void complete();
-
       //! Check status of command
       /*!
        * @return  Current status of command
@@ -89,6 +80,22 @@ namespace Icom
        * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
        */
       Status status() const { return m_status; }
+
+      //! %Command specific completion
+      /*!
+       * Calling this function forces the child class to process the result
+       * data buffer. Normally just return "true".
+       *
+       * We also use this virtual function for commands that may require
+       * multiple executions before they are actually complete. One example of
+       * this being useful is for polling the squelch status of the receiver
+       * and not being "done" until it is either open or close.
+       *
+       * @return  "false" if command should be run again. "true" otherwise.
+       * @date    September 3, 2015
+       * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+       */
+      virtual bool complete() =0;
 
       virtual ~Command_base() {}
 
@@ -102,7 +109,7 @@ namespace Icom
       /*!
        * @param   [in] destination The CI-V address of the destination device.
        * @param   [in] source The CI-V address of the source controller.
-       * @date    September 2, 2015
+       * @date    September 3, 2015
        * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
        */
       Command_base(
@@ -110,22 +117,6 @@ namespace Icom
             const unsigned char source);
 
       Status m_status;                    //!< Current status of command
-
-      //! %Command specific completion
-      /*!
-       * Calling this function forces the child class to process the result
-       * data buffer. Normally just return "true".
-       *
-       * We also use this virtual function for commands that may require
-       * multiple executions before they are actually complete. One example of
-       * this being useful is for polling the squelch status of the receiver
-       * and not being "done" until it is either open or close.
-       *
-       * @return  "false" if command should be run again. "true" otherwise.
-       * @date    September 1, 2015
-       * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-       */
-      virtual bool complete() =0;
 
       Buffer m_command;  //!< Buffer with actual command data
       Buffer m_result;   //!< Buffer with command result

@@ -2,7 +2,7 @@
  * @file       Command.cpp
  * @brief      Defines the Icom::Command class
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date       September 2, 2015
+ * @date       September 3, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
  *             under the GNU General Public License Version 3.
  */
@@ -27,23 +27,7 @@
 
 #include "Command.hpp"
 
-void Icom::Command_base::complete()
-{
-   if(
-         m_result[0] == 0xfe &&
-         m_result[1] == 0xfe &&
-         m_result[2] == m_source &&
-         m_result[3] == m_destination &&
-         m_result.back() == 0xfd)
-      subComplete();
-
-   if(m_status != SUCCESS)
-      m_status = FAIL;
-}
-
-Icom::Command_base(
-      const size_t commandSize,
-      const size_t resultSize,
+Icom::Command_base::Command_base(
       const unsigned char destination,
       const unsigned char source):
    m_destination(destination),

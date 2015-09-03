@@ -37,7 +37,7 @@ namespace Icom
 {
    //! Retrieve the operating frequency of an %Icom CI-V device
    /*!
-    * @date    September 2, 2015
+    * @date    September 3, 2015
     * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
     */
    class GetFrequency: public Command_base
@@ -60,7 +60,7 @@ namespace Icom
        * called.
        *
        * @return  Integer representation of operating frequency in Hertz.
-       * @date    September 1, 2015
+       * @date    September 3, 2015
        * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
        */
       unsigned int result() const { return m_frequency; }

@@ -2,7 +2,7 @@
  * @file       Controller.cpp
  * @brief      Defines the Icom::Controller class
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date       September 1, 2015
+ * @date       September 3, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
  *             under the GNU General Public License Version 3.
  */
@@ -30,6 +30,7 @@
 #include <termios.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <sys/ioctl.h>
 
 Icom::Controller::Controller(
       const char* port,
@@ -42,9 +43,9 @@ Icom::Controller::Controller(
       throw;
    }
    fcntl(fd, F_SETFL, 0);
-   if (!isatty(port)) 
+   if (!isatty(fd))
    {
-      close(port);
+      close(fd);
       fd=-1;
       throw;
    }
@@ -88,7 +89,7 @@ Icom::Controller::Controller(
          CSIZE |                                 // We set it to 8 bits below
          PARENB |                                // No parity bits
          CSTOPB |                                // Single stop bit
-         CNEW_RTSCTS |                           // No hardware flow control
+         // CNEW_RTSCTS |                           // No hardware flow control
          HUPCL                                   // Don't mess with the DTR
          );
    options.c_cflag |= (CLOCAL | CREAD | CS8 | IGNPAR);
@@ -117,22 +118,21 @@ Icom::Controller::~Controller()
 
 void Icom::Controller::Execute(Command& command)
 {
-   Buffer& buffer=command->resultData();
+   bool notForUs=false;
 
    do
    {
       // Send the command
       const Buffer header={
-            Command::header,
-            Command::header,
-            command.destination,
-            command.source};
+            Command_base::header,
+            Command_base::header,
+            command->m_destination,
+            command->m_source};
       put(header);
       put(command->commandData());
-      put(Command::footer);
+      put(Command_base::footer);
 
       // Get the reply
-      bool notForUs=false;
       unsigned int state=0;
       unsigned char buffer;
       while(state<5)
@@ -143,22 +143,22 @@ void Icom::Controller::Execute(Command& command)
          {
             case 0:
             case 1:
-               if(buffer!=Command::header)
+               if(buffer!=Command_base::header)
                   throw;
                ++state;
                break;
             case 2:
-               if(buffer!=command.source)
+               if(buffer!=command->m_source)
                   notForUs=true;
                ++state;
                break;
             case 3:
-               if(buffer!=command.destination)
+               if(buffer!=command->m_destination)
                   notForUs=true;
                ++state;
                break;
             case 4:
-               if(buffer != Command::footer)
+               if(buffer != Command_base::footer)
                   command->resultData().push_back(buffer);
                else
                   ++state;
@@ -166,7 +166,7 @@ void Icom::Controller::Execute(Command& command)
          }
 
          // We don't want to recieve a giant reply
-         if(command->resultData().size() >= Command::bufferReserveSize)
+         if(command->resultData().size() >= Command_base::bufferReserveSize)
             throw;
       }
 
@@ -186,13 +186,13 @@ unsigned char Icom::Controller::get()
 
 void Icom::Controller::put(const Buffer data)
 {
-   ssize_t position=0;
-   const ssize_t n;
+   size_t position=0;
+   ssize_t n;
    while(position < data.size())
    {
       n = write(
             fd, 
-            &data.font()+position, 
+            &data.front()+position,
             data.size()-position);
       if(n < 0)
          throw;

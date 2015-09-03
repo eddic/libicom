@@ -2,7 +2,7 @@
  * @file       GetFrequency.cpp
  * @brief      Defines the Icom::GetFrequency class
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date       September 2, 2015
+ * @date       September 3, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
  *             under the GNU General Public License Version 3.
  */
@@ -30,7 +30,7 @@
 #include "GetFrequency.hpp"
 #include "getBCD.hpp"
 
-void Icom::GetFrequency::complete()
+bool Icom::GetFrequency::complete()
 {
    m_frequency=0;
 
@@ -38,7 +38,7 @@ void Icom::GetFrequency::complete()
    {
       const uint64_t bigBCD = getBCD(m_result.begin()+1, m_result.end());
 
-      if(bigBCD <= uint64_t(std::numeric_limits<unsigned int>))
+      if(bigBCD <= (uint64_t)(std::numeric_limits<unsigned int>::max()))
          m_frequency = (unsigned int)bigBCD;
    }
 

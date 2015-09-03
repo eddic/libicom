@@ -2,7 +2,7 @@
  * @file       Controller.hpp
  * @brief      Declares the Icom::Controller class
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date       September 1, 2015
+ * @date       September 3, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
  *             under the GNU General Public License Version 3.
  */
@@ -35,7 +35,7 @@ namespace Icom
 {
    //! Class for representing an %Icom CI-V controller
    /*!
-    * @date    September 1, 2015
+    * @date    September 3, 2015
     * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
     */
    class Controller
