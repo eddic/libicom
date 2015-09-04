@@ -30,7 +30,7 @@
 #include "GetFrequency.hpp"
 #include "getBCD.hpp"
 
-bool Icom::GetFrequency::complete()
+bool Icom::GetFrequency::subcomplete()
 {
    m_frequency=0;
 
@@ -45,7 +45,7 @@ bool Icom::GetFrequency::complete()
    if(m_frequency)
       m_status=SUCCESS;
    else
-      m_status=FAIL;
+      m_status=PARSEERROR;
 
    return true;
 }

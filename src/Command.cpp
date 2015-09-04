@@ -34,3 +34,20 @@ Icom::Command_base::Command_base(const Device& dev):
    m_command.reserve(bufferReserveSize);
    m_result.reserve(bufferReserveSize);
 }
+
+bool Icom::Command_base::complete()
+{
+   if(m_result.size() == 1)
+   {
+      switch(m_result.front())
+      {
+         case 0xfb:
+            m_status = SUCCESS;
+            return true;
+         case 0xfa:
+            m_status = FAIL;
+            return true;
+      }
+   }
+   return subcomplete();
+}

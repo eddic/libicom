@@ -6,6 +6,7 @@
 #include <array>
 #include <iomanip>
 #include <locale>
+#include <sstream>
 
 #include "Device.hpp"
 #include "Controller.hpp"
@@ -23,6 +24,47 @@ class InvalidCommand: public std::exception
    }
 };
 
+class CommandIncomplete: public std::exception
+{
+   const char* what() const throw()
+   {
+      return "Command not complete.";
+   }
+};
+
+class CommandFailed: public std::exception
+{
+   const char* what() const throw()
+   {
+      return "Command failed.";
+   }
+};
+
+class CommandParseError: public std::exception
+{
+public:
+   CommandParseError(const Icom::Buffer& buffer)
+   {
+      std::stringstream ss;
+      ss << "Failure parsing reply. Got";
+      for(const auto& byte : buffer)
+         ss << ' '
+            << std::setfill('0')
+            << std::setw(2)
+            << std::fixed
+            << std::hex
+            << (int)byte;
+      m_message = ss.str();
+   }
+private:
+   std::string m_message;
+
+   const char* what() const throw()
+   {
+      return m_message.c_str();
+   }
+};
+
 typedef std::array<std::string, 1> CommandStrings;
 const CommandStrings commandStrings = {
       "getfrequency"};
@@ -37,7 +79,7 @@ int main(int argc, char *argv[])
          arguments.push_back(std::string(argv[i]));
 
       if(arguments.size() < 4)
-         throw;
+         throw std::invalid_argument("Too few arguments");
 
       // First should be the port
       const Icom::Controller controller(arguments.front());
@@ -76,6 +118,7 @@ int main(int argc, char *argv[])
       arguments.pop_front();
 
       std::cout.imbue(std::locale(""));
+      Icom::Command command;
 
       switch(commandID)
       {
@@ -86,10 +129,25 @@ int main(int argc, char *argv[])
                *static_cast<const Icom::GetFrequency*>(command.get());
 
             controller.execute(command);
-            std::cout << "Operating frequency: "
-                      << std::fixed << getFrequency.result()
-                      << std::endl;
-            break;
+            switch(command->status())
+            {
+               case Icom::SUCCESS:
+                  std::cout << "Operating frequency: "
+                            << std::fixed << getFrequency.result()
+                            << " Hz"
+                            << std::endl;
+                  break;
+               case Icom::PARSEERROR:
+                  throw CommandParseError(command->resultData());
+
+               case Icom::INCOMPLETE:
+                  throw CommandIncomplete();
+
+               case Icom::FAIL:
+                  throw CommandFailed();
+            }
+            return 0;
+
          }
          default:
             throw InvalidCommand();

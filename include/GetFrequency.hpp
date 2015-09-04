@@ -52,11 +52,11 @@ namespace Icom
        * @date    September 2, 2015
        * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
        */
-      bool complete();
+      bool subcomplete();
 
       //! Retrieve the operating frequency
       /*!
-       * The output of this function is only valid once complete() has been
+       * The output of this function is only valid once subcomplete() has been
        * called.
        *
        * @return  Integer representation of operating frequency in Hertz.

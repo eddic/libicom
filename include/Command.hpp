@@ -40,7 +40,7 @@ namespace Icom
    typedef std::vector<unsigned char> Buffer;
 
    //! Enumeration for indicating command status
-   enum Status {INCOMPLETE, FAIL, SUCCESS};
+   enum Status {INCOMPLETE, FAIL, PARSEERROR, SUCCESS};
 
    //! Base class for any %Icom CI-V commands
    /*!
@@ -83,6 +83,29 @@ namespace Icom
        */
       Status status() const { return m_status; }
 
+      virtual ~Command_base() {}
+
+      static const unsigned char footer=0xfd;
+      static const unsigned char header=0xfe;
+      static const size_t bufferReserveSize=64;
+      const Device device;  //!< Target %Icom device
+
+      //! Initiate completion
+      /*!
+       * Calling this function forces the class to process the result
+       * data buffer. Normally just return "true".
+       *
+       * We also use this function for commands that may require
+       * multiple executions before they are actually complete. One example of
+       * this being useful is for polling the squelch status of the receiver
+       * and not being "done" until it is either open or close.
+       *
+       * @return  "false" if command should be run again. "true" otherwise.
+       * @date    September 4, 2015
+       * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+       */
+      bool complete();
+   protected:
       //! %Command specific completion
       /*!
        * Calling this function forces the child class to process the result
@@ -94,18 +117,11 @@ namespace Icom
        * and not being "done" until it is either open or close.
        *
        * @return  "false" if command should be run again. "true" otherwise.
-       * @date    September 3, 2015
+       * @date    September 4, 2015
        * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
        */
-      virtual bool complete() =0;
+      virtual bool subcomplete() { return true; }
 
-      virtual ~Command_base() {}
-
-      static const unsigned char footer=0xfd;
-      static const unsigned char header=0xfe;
-      static const size_t bufferReserveSize=64;
-      const Device device;  //!< Target %Icom device
-   protected:
       //! Sole constructor
       /*!
        * @param   [in] Device The %Icom Device in question

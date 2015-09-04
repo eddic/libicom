@@ -124,18 +124,23 @@ void Icom::Controller::execute(Command& command) const
    do
    {
       // Send the command
-      const Buffer header={
-            Command_base::header,
-            Command_base::header,
-            command->device.address,
-            m_address};
-      put(header);
-      put(command->commandData());
-      put(Command_base::footer);
+      if(!notForUs)
+      {
+         const Buffer header={
+               Command_base::header,
+               Command_base::header,
+               command->device.address,
+               m_address};
+         put(header);
+         put(command->commandData());
+         put(Command_base::footer);
+      }
 
       // Get the reply
+      notForUs=false;
       unsigned int state=0;
       unsigned char buffer;
+      command->resultData().clear();
       while(state<5)
       {
          buffer=get();
@@ -145,7 +150,7 @@ void Icom::Controller::execute(Command& command) const
             case 0:
             case 1:
                if(buffer!=Command_base::header)
-                  throw;
+                  throw InvalidReply();
                ++state;
                break;
             case 2:
@@ -168,7 +173,7 @@ void Icom::Controller::execute(Command& command) const
 
          // We don't want to recieve a giant reply
          if(command->resultData().size() >= Command_base::bufferReserveSize)
-            throw;
+            throw BufferOverflow();
       }
 
    } while(notForUs || !command->complete());
@@ -181,7 +186,7 @@ unsigned char Icom::Controller::get() const
    while(n==0)
       n = read(m_fd, &x, 1);
    if(n < 0)
-      throw;
+      throw ReadError();
    return x;
 }
 
@@ -196,7 +201,7 @@ void Icom::Controller::put(const Buffer data) const
             &data.front()+position,
             data.size()-position);
       if(n < 0)
-         throw;
+         throw WriteError();
       position += n;
    }
 }
@@ -207,5 +212,5 @@ void Icom::Controller::put(const unsigned char byte) const
    while(n==0)
       n = write(m_fd, &byte, 1);
    if(n < 0)
-      throw;
+      throw WriteError();
 }

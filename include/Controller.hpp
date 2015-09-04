@@ -85,9 +85,42 @@ namespace Icom
       {
          const char* what() const throw()
          {
-            return "Invalid Baud Rate.";
+            return "Invalid baud rate.";
          }
       };
+
+      class InvalidReply: public std::exception
+      {
+         const char* what() const throw()
+         {
+            return "Invalid reply from device.";
+         }
+      };
+
+      class BufferOverflow: public std::exception
+      {
+         const char* what() const throw()
+         {
+            return "Receive buffer would overflow.";
+         }
+      };
+
+      class WriteError: public std::exception
+      {
+         const char* what() const throw()
+         {
+            return "Error writing to serial port.";
+         }
+      };
+
+      class ReadError: public std::exception
+      {
+         const char* what() const throw()
+         {
+            return "Error reading from serial port.";
+         }
+      };
+
    private:
       int m_fd;  //!< File descriptor of serial port.
 
