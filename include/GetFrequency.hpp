@@ -65,18 +65,20 @@ namespace Icom
        */
       unsigned int result() const { return m_frequency; }
 
+      static GetFrequency* make(const Device& dev)
+      {
+         return new GetFrequency(dev);
+      }
+       
+   private:
       //! Construct the command object
       /*!
-       * @param   [in] destination Destination device CI-V address
-       * @param   [in] source Source controller CI-V address
+       * @param   [in] Device The %Icom Device in question
        * @date    September 2, 2015
        * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
        */
-      GetFrequency(
-            unsigned char destination=0x72,
-            unsigned char source=0xe0);
-       
-   private:
+      GetFrequency(const Device& dev);
+
       unsigned int m_frequency;              //!< Retrieved operating frequency
       static const unsigned char code=0x03;  //!< Command code
    };

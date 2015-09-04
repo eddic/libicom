@@ -2,7 +2,7 @@
  * @file       Command.cpp
  * @brief      Defines the Icom::Command class
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date       September 3, 2015
+ * @date       September 4, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
  *             under the GNU General Public License Version 3.
  */
@@ -27,11 +27,8 @@
 
 #include "Command.hpp"
 
-Icom::Command_base::Command_base(
-      const unsigned char destination,
-      const unsigned char source):
-   m_destination(destination),
-   m_source(source),
+Icom::Command_base::Command_base(const Device& dev):
+   device(dev),
    m_status(INCOMPLETE)
 {
    m_command.reserve(bufferReserveSize);

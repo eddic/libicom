@@ -2,7 +2,7 @@
  * @file       Controller.cpp
  * @brief      Defines the Icom::Controller class
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date       September 3, 2015
+ * @date       September 4, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
  *             under the GNU General Public License Version 3.
  */
@@ -33,26 +33,27 @@
 #include <sys/ioctl.h>
 
 Icom::Controller::Controller(
-      const char* port,
-      unsigned int baudRate):
-   fd(-1)
+      const std::string& port,
+      unsigned int baudRate,
+      unsigned char address):
+   m_fd(-1),
+   m_address(address)
 {
-   fd = open(port, O_RDWR | O_NOCTTY | O_NDELAY);
-   if(fd == -1)
+   m_fd = open(port.c_str(), O_RDWR | O_NOCTTY | O_NDELAY);
+   if(m_fd == -1)
+      throw CantOpenPort();
+
+   fcntl(m_fd, F_SETFL, 0);
+   if (!isatty(m_fd))
    {
-      throw;
-   }
-   fcntl(fd, F_SETFL, 0);
-   if (!isatty(fd))
-   {
-      close(fd);
-      fd=-1;
-      throw;
+      close(m_fd);
+      m_fd=-1;
+      throw PortNotTTY();
    }
    
    // Configure serial port options
    struct termios options;
-   tcgetattr(fd, &options);
+   tcgetattr(m_fd, &options);
 
    // Set serial port speed
    speed_t rate=B0;
@@ -77,7 +78,7 @@ Icom::Controller::Controller(
          rate=B19200;
          break;
       default:
-         throw;
+         InvalidBaudRate();
    }
    cfsetispeed(&options, rate);
    cfsetospeed(&options, rate);
@@ -95,28 +96,28 @@ Icom::Controller::Controller(
    options.c_cflag |= (CLOCAL | CREAD | CS8 | IGNPAR);
    options.c_cc[VTIME] = 2;                      // Timeout our reads in 200ms
    options.c_cc[VMIN] = 0;
-   tcsetattr(fd, TCSANOW, &options);
+   tcsetattr(m_fd, TCSANOW, &options);
 
    // Enable the DTR
    int lineData;
-   ioctl(fd, TIOCMGET, &lineData);
+   ioctl(m_fd, TIOCMGET, &lineData);
    lineData |= TIOCM_DTR;
-   ioctl(fd, TIOCMSET, &lineData);
+   ioctl(m_fd, TIOCMSET, &lineData);
 }
 
 Icom::Controller::~Controller()
 {
-   if(fd != -1)
+   if(m_fd != -1)
    {
       int lineData;
-      ioctl(fd, TIOCMGET, &lineData);
+      ioctl(m_fd, TIOCMGET, &lineData);
       lineData &= ~TIOCM_DTR;
-      ioctl(fd, TIOCMSET, &lineData);
-      close(fd);
+      ioctl(m_fd, TIOCMSET, &lineData);
+      close(m_fd);
    }
 }
 
-void Icom::Controller::Execute(Command& command)
+void Icom::Controller::execute(Command& command) const
 {
    bool notForUs=false;
 
@@ -126,8 +127,8 @@ void Icom::Controller::Execute(Command& command)
       const Buffer header={
             Command_base::header,
             Command_base::header,
-            command->m_destination,
-            command->m_source};
+            command->device.address,
+            m_address};
       put(header);
       put(command->commandData());
       put(Command_base::footer);
@@ -148,12 +149,12 @@ void Icom::Controller::Execute(Command& command)
                ++state;
                break;
             case 2:
-               if(buffer!=command->m_source)
+               if(buffer!=m_address)
                   notForUs=true;
                ++state;
                break;
             case 3:
-               if(buffer!=command->m_destination)
+               if(buffer!=command->device.address)
                   notForUs=true;
                ++state;
                break;
@@ -173,25 +174,25 @@ void Icom::Controller::Execute(Command& command)
    } while(notForUs || !command->complete());
 }
 
-unsigned char Icom::Controller::get()
+unsigned char Icom::Controller::get() const
 {
    unsigned char x;
    ssize_t n=0;
    while(n==0)
-      n = read(fd, &x, 1);
+      n = read(m_fd, &x, 1);
    if(n < 0)
       throw;
    return x;
 }
 
-void Icom::Controller::put(const Buffer data)
+void Icom::Controller::put(const Buffer data) const
 {
    size_t position=0;
    ssize_t n;
    while(position < data.size())
    {
       n = write(
-            fd, 
+            m_fd, 
             &data.front()+position,
             data.size()-position);
       if(n < 0)
@@ -200,11 +201,11 @@ void Icom::Controller::put(const Buffer data)
    }
 }
 
-void Icom::Controller::put(const unsigned char byte)
+void Icom::Controller::put(const unsigned char byte) const
 {
    ssize_t n=0;
    while(n==0)
-      n = write(fd, &byte, 1);
+      n = write(m_fd, &byte, 1);
    if(n < 0)
       throw;
 }

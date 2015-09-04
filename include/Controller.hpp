@@ -2,7 +2,7 @@
  * @file       Controller.hpp
  * @brief      Declares the Icom::Controller class
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date       September 3, 2015
+ * @date       September 4, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
  *             under the GNU General Public License Version 3.
  */
@@ -28,6 +28,9 @@
 #ifndef CONTROLLER_HPP
 #define CONTROLLER_HPP
 
+#include <exception>
+#include <string>
+
 #include "Command.hpp"
 
 //! Contains all elements for controlling %Icom devices
@@ -35,7 +38,7 @@ namespace Icom
 {
    //! Class for representing an %Icom CI-V controller
    /*!
-    * @date    September 3, 2015
+    * @date    September 4, 2015
     * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
     */
    class Controller
@@ -47,8 +50,9 @@ namespace Icom
        * @param   [in] baudrate The baud rate to operate the serial port at.
        */
       Controller(
-            const char* port,
-            unsigned int baudRate);
+            const std::string& port,
+            unsigned int baudRate=19200,
+            unsigned char address=0xe0);
 
       ~Controller();
 
@@ -59,18 +63,45 @@ namespace Icom
        *
        * @param   [inout] command The Command to execute.
        */
-      void Execute(Command& command);
+      void execute(Command& command) const;
+
+      class CantOpenPort: public std::exception
+      {
+         const char* what() const throw()
+         {
+            return "Unable to open serial port.";
+         }
+      };
+
+      class PortNotTTY: public std::exception
+      {
+         const char* what() const throw()
+         {
+            return "Serial port is not a tty.";
+         }
+      };
+
+      class InvalidBaudRate: public std::exception
+      {
+         const char* what() const throw()
+         {
+            return "Invalid Baud Rate.";
+         }
+      };
    private:
-      int fd;  //!< File descriptor of serial port.
+      int m_fd;  //!< File descriptor of serial port.
 
       //! Retrieve a byte from the serial port
-      inline unsigned char get();
+      inline unsigned char get() const;
 
       //! Send a string of bytes down the serial port
-      inline void put(const Buffer data);
+      inline void put(const Buffer data) const;
 
       //! Send a byte down the serial port
-      inline void put(const unsigned char byte);
+      inline void put(const unsigned char byte) const;
+
+      //! Address of controller
+      const unsigned char m_address;
    };
 }
 

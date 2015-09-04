@@ -2,7 +2,7 @@
  * @file       Command.hpp
  * @brief      Declares the Icom::Command class
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date       September 3, 2015
+ * @date       September 4, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
  *             under the GNU General Public License Version 3.
  */
@@ -31,6 +31,8 @@
 #include <vector>
 #include <memory>
 
+#include "Device.hpp"
+
 //! Contains all elements for controlling %Icom devices
 namespace Icom
 {
@@ -45,7 +47,7 @@ namespace Icom
     * This class should be derived from to implement any %Icom CI-V control
     * commands.
     *
-    * @date    September 3, 2015
+    * @date    September 4, 2015
     * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
     */
    class Command_base
@@ -102,19 +104,15 @@ namespace Icom
       static const unsigned char footer=0xfd;
       static const unsigned char header=0xfe;
       static const size_t bufferReserveSize=64;
-      const unsigned char m_destination;  //!< Address of destination device
-      const unsigned char m_source;       //!< Address of source device
+      const Device device;  //!< Target %Icom device
    protected:
       //! Sole constructor
       /*!
-       * @param   [in] destination The CI-V address of the destination device.
-       * @param   [in] source The CI-V address of the source controller.
+       * @param   [in] Device The %Icom Device in question
        * @date    September 3, 2015
        * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
        */
-      Command_base(
-            const unsigned char destination,
-            const unsigned char source);
+      Command_base(const Device& dev);
 
       Status m_status;                    //!< Current status of command
 
