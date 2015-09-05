@@ -10,11 +10,15 @@
 
 #include "Device.hpp"
 #include "Controller.hpp"
-#include "GetFrequency.hpp"
+#include "Frequency.hpp"
 
 enum Command {
-   GETFREQUENCY
+   FREQUENCY
 };
+
+typedef std::array<std::string, 1> CommandStrings;
+const CommandStrings commandStrings = {
+      "frequency"};
 
 class InvalidCommand: public std::exception
 {
@@ -65,10 +69,6 @@ private:
    }
 };
 
-typedef std::array<std::string, 1> CommandStrings;
-const CommandStrings commandStrings = {
-      "getfrequency"};
-
 int main(int argc, char *argv[])
 {
    try
@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
       // Third should be the device address
       if(arguments.front().size() != 2)
          throw;
-      const unsigned char deviceAddress = (unsigned char)std::stoi(
+      const unsigned char deviceAddress = (unsigned char)std::stoul(
             arguments.front(),
             0,
             16);
@@ -117,40 +117,62 @@ int main(int argc, char *argv[])
             -commandStrings.cbegin());
       arguments.pop_front();
 
-      std::cout.imbue(std::locale(""));
       Icom::Command command;
 
       switch(commandID)
       {
-         case GETFREQUENCY:
+         case FREQUENCY:
          {
-            Icom::Command command(Icom::GetFrequency::make(device));
-            const Icom::GetFrequency& getFrequency=
-               *static_cast<const Icom::GetFrequency*>(command.get());
-
-            controller.execute(command);
-            switch(command->status())
+            if(!arguments.size())
             {
-               case Icom::SUCCESS:
-                  std::cout << "Operating frequency: "
-                            << std::fixed << getFrequency.result()
-                            << " Hz"
-                            << std::endl;
-                  break;
-               case Icom::PARSEERROR:
-                  throw CommandParseError(command->resultData());
+               command.reset(Icom::GetFrequency::make(device));
+               const Icom::GetFrequency& getFrequency=
+                  *static_cast<const Icom::GetFrequency*>(command.get());
 
-               case Icom::INCOMPLETE:
-                  throw CommandIncomplete();
+               controller.execute(command);
+               switch(command->status())
+               {
+                  case Icom::SUCCESS:
+                     std::cout << std::fixed
+                               << getFrequency.result()
+                               << std::endl;
+                     break;
+                  case Icom::PARSEERROR:
+                     throw CommandParseError(command->resultData());
 
-               case Icom::FAIL:
-                  throw CommandFailed();
+                  case Icom::INCOMPLETE:
+                     throw CommandIncomplete();
+
+                  case Icom::FAIL:
+                     throw CommandFailed();
+               }
+               return 0;
             }
-            return 0;
-
+            else if(arguments.size()==1)
+            {
+               const unsigned int frequency=std::stoul(arguments.front());
+               command.reset(Icom::SetFrequency::make(device, frequency));
+               break;
+            }
          }
          default:
             throw InvalidCommand();
+      }
+
+      controller.execute(command);
+      switch(command->status())
+      {
+         case Icom::SUCCESS:
+            std::cout << "Command Succeeded" << std::endl;
+            break;
+         case Icom::PARSEERROR:
+            throw CommandParseError(command->resultData());
+
+         case Icom::INCOMPLETE:
+            throw CommandIncomplete();
+
+         case Icom::FAIL:
+            throw CommandFailed();
       }
 
       return 0;

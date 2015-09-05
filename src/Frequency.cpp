@@ -1,8 +1,8 @@
 /*!
- * @file       GetFrequency.cpp
+ * @file       Frequency.cpp
  * @brief      Defines the Icom::GetFrequency class
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date       September 3, 2015
+ * @date       September 4, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
  *             under the GNU General Public License Version 3.
  */
@@ -27,8 +27,8 @@
 
 #include <limits>
 
-#include "GetFrequency.hpp"
-#include "getBCD.hpp"
+#include "Frequency.hpp"
+#include "BCD.hpp"
 
 bool Icom::GetFrequency::subcomplete()
 {
@@ -50,9 +50,25 @@ bool Icom::GetFrequency::subcomplete()
    return true;
 }
 
+Icom::Frequency::Frequency(
+      const Device& dev,
+      unsigned int freq,
+      bool reply):
+   Command_base(dev, reply),
+   m_frequency(freq)
+{
+}
+
 Icom::GetFrequency::GetFrequency(const Device& dev):
-   Command_base(dev),
-   m_frequency(0)
+   Frequency(dev, 0)
 {
    m_command.push_back(code);
+}
+
+Icom::SetFrequency::SetFrequency(const Device& dev, unsigned int frequency):
+   Frequency(dev, frequency, false)
+{
+   m_command.resize(6);
+   m_command.front() = code;
+   putBCD(m_command.begin()+1, m_command.end(), m_frequency);
 }

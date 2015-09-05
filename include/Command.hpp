@@ -105,6 +105,8 @@ namespace Icom
        * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
        */
       bool complete();
+
+      const bool m_reply;
    protected:
       //! %Command specific completion
       /*!
@@ -124,11 +126,12 @@ namespace Icom
 
       //! Sole constructor
       /*!
-       * @param   [in] Device The %Icom Device in question
+       * @param   [in] dev The %Icom Device in question
+       * @param   [in] reply Should we expect a reply?
        * @date    September 3, 2015
        * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
        */
-      Command_base(const Device& dev);
+      Command_base(const Device& dev, bool reply=true);
 
       Status m_status;                    //!< Current status of command
 

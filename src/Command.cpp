@@ -27,8 +27,9 @@
 
 #include "Command.hpp"
 
-Icom::Command_base::Command_base(const Device& dev):
+Icom::Command_base::Command_base(const Device& dev, bool reply):
    device(dev),
+   m_reply(reply),
    m_status(INCOMPLETE)
 {
    m_command.reserve(bufferReserveSize);
@@ -37,7 +38,9 @@ Icom::Command_base::Command_base(const Device& dev):
 
 bool Icom::Command_base::complete()
 {
-   if(m_result.size() == 1)
+   if(!m_reply)
+      m_status = SUCCESS;
+   else if(m_result.size() == 1)
    {
       switch(m_result.front())
       {

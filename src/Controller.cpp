@@ -136,44 +136,47 @@ void Icom::Controller::execute(Command& command) const
          put(Command_base::footer);
       }
 
-      // Get the reply
-      notForUs=false;
-      unsigned int state=0;
-      unsigned char buffer;
-      command->resultData().clear();
-      while(state<5)
+      if(command->m_reply)
       {
-         buffer=get();
-
-         switch(state)
+         // Get the reply
+         notForUs=false;
+         unsigned int state=0;
+         unsigned char buffer;
+         command->resultData().clear();
+         while(state<5)
          {
-            case 0:
-            case 1:
-               if(buffer!=Command_base::header)
-                  throw InvalidReply();
-               ++state;
-               break;
-            case 2:
-               if(buffer!=m_address)
-                  notForUs=true;
-               ++state;
-               break;
-            case 3:
-               if(buffer!=command->device.address)
-                  notForUs=true;
-               ++state;
-               break;
-            case 4:
-               if(buffer != Command_base::footer)
-                  command->resultData().push_back(buffer);
-               else
-                  ++state;
-               break;
-         }
+            buffer=get();
 
-         // We don't want to recieve a giant reply
-         if(command->resultData().size() >= Command_base::bufferReserveSize)
-            throw BufferOverflow();
+            switch(state)
+            {
+               case 0:
+               case 1:
+                  if(buffer!=Command_base::header)
+                     throw InvalidReply();
+                  ++state;
+                  break;
+               case 2:
+                  if(buffer!=m_address)
+                     notForUs=true;
+                  ++state;
+                  break;
+               case 3:
+                  if(buffer!=command->device.address)
+                     notForUs=true;
+                  ++state;
+                  break;
+               case 4:
+                  if(buffer != Command_base::footer)
+                     command->resultData().push_back(buffer);
+                  else
+                     ++state;
+                  break;
+            }
+
+            // We don't want to recieve a giant reply
+            if(command->resultData().size() >= Command_base::bufferReserveSize)
+               throw BufferOverflow();
+         }
       }
 
    } while(notForUs || !command->complete());

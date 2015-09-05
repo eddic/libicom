@@ -1,8 +1,8 @@
 /*!
- * @file       getBCD.hpp
- * @brief      Declares the Icom::getBCD function
+ * @file       BCD.hpp
+ * @brief      Declares functions for handling binary coded decimal
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date       September 2, 2015
+ * @date       September 4, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
  *             under the GNU General Public License Version 3.
  */
@@ -25,24 +25,37 @@
  * The %Icom CI-V Control Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GETBCD_HPP
-#define GETBCD_HPP
+#ifndef BCD_HPP
+#define BCD_HPP
 
 #include "Command.hpp"
 
 //! Contains all elements for controlling %Icom devices
 namespace Icom
 {
-   //! Sole constructor
+   //! Extract a binary coded decimal number from a string of bytes
    /*!
-    * @param   [in] destination The CI-V address of the destination device.
-    * @param   [in] source The CI-V address of the source controller.
-    * @date    September 2, 2015
+    * @param   [in] start Iterator to the start of the data
+    * @param   [in] end Iterator to the end of the data
+    * @date    September 4, 2015
     * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
     */
    uint64_t getBCD(
-         Buffer::const_iterator start,
-         Buffer::const_iterator end);
+         const Buffer::const_iterator start,
+         const Buffer::const_iterator end);
+
+   //! Insert a binary coded decimal number into a string of bytes
+   /*!
+    * @param   [out] start Iterator to data start
+    * @param   [out] start Iterator to data end
+    * @param   [in] number Number to convert to %BCD
+    * @date    September 4, 2015
+    * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+    */
+   void putBCD(
+         const Buffer::iterator start,
+         const Buffer::iterator end,
+         uint64_t number);
 }
 
 #endif
