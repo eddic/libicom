@@ -1,6 +1,6 @@
 /*!
- * @file       Device.cpp
- * @brief      Defines the Icom::Device class
+ * @file       Power.cpp
+ * @brief      Defines the classes for turning an %Icom device on or off
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
  * @date       September 4, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
@@ -25,7 +25,13 @@
  * The %Icom CI-V Control Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Device.hpp"
+#include "Power.hpp"
 
-const Icom::modelNames_t Icom::modelNames = {
-      "IC-R9500"};
+Icom::Power::Power(const Device& dev, powerState_t state):
+   Command_base(dev)
+{
+   m_command.push_back(code);
+   m_command.push_back((uint8_t)state);
+}
+
+const Icom::powerStateNames_t Icom::powerStateNames = { "on", "off" };

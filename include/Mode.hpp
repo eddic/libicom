@@ -1,7 +1,7 @@
 /*!
- * @file       Frequency.hpp
+ * @file       mode_t.hpp
  * @brief      Declares the classes for setting/getting the operating
- *             frequency of an %Icom device.
+ *             mode of an %Icom device.
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
  * @date       September 4, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
@@ -26,49 +26,58 @@
  * The %Icom CI-V Control Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef FREQUENCY_HPP
-#define FREQUENCY_HPP
+#ifndef MODE_HPP
+#define MODE_HPP
 
 #include "Command.hpp"
 
 //! Contains all elements for controlling %Icom devices
 namespace Icom
 {
-   //! Base class for handling operating frequencies
-   /*!
-    * @date    September 4, 2015
-    * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-    */
-   class Frequency: public Command_base
+   enum mode_t: uint8_t
    {
-   protected:
-      //! Construct the command object
-      /*!
-       * @param   [in] dev The %Icom Device in question
-       * @param   [in] freq The starting frequency
-       * @date    September 4, 2015
-       * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-       */
-      Frequency(
-            const Device& dev,
-            unsigned int freq,
-            bool reply=true);
-
-      unsigned int m_frequency;              //!< Retrieved operating frequency
+      LSB   = 0x00,
+      USB   = 0x01,
+      AM    = 0x02,
+      CW    = 0x03,
+      FSK   = 0x04,
+      FM    = 0x05,
+      WFM   = 0x06,
+      CWR   = 0x07,
+      FSKR  = 0x08,
+      SAMD  = 0x11,
+      PSK   = 0x12,
+      SAML  = 0x14,
+      SAMU  = 0x15,
+      P25   = 0x16
    };
+   typedef std::array<std::string, 0x17> modeNames_t;
+   extern const modeNames_t modeNames;
+   STRING_TO_ENUM(mode)
 
-   //! Retrieve the operating frequency of an %Icom CI-V device
+   enum filter_t: uint8_t
+   {
+      NONE   = 0x00,
+      WIDE   = 0x01,
+      MEDIUM = 0x02,
+      NARROW = 0x03
+   };
+   typedef std::array<std::string, 0x04> filterNames_t;
+   extern const filterNames_t filterNames;
+   STRING_TO_ENUM(filter)
+
+   //! Retrieve the operating mode of an %Icom CI-V device
    /*!
     * @date    September 4, 2015
     * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
     */
-   class GetFrequency: public Frequency
+   class GetMode: public Command_base
    {
    public:
       //! Complete the command
       /*!
        * Calling this function forces the child class to process the result data
-       * buffer into the actual operating frequency.
+       * buffer into the actual operating mode.
        *
        * @return  Always true.
        * @date    September 4, 2015
@@ -76,16 +85,27 @@ namespace Icom
        */
       bool subcomplete();
 
-      //! Retrieve the operating frequency
+      //! Retrieve the operating mode
       /*!
        * The output of this function is only valid once subcomplete() has been
        * called.
        *
-       * @return  Integer representation of operating frequency in Hertz.
+       * @return  Current operating mode of device
        * @date    September 3, 2015
        * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
        */
-      unsigned int result() const { return m_frequency; }
+      mode_t mode() const { return m_mode; }
+
+      //! Retrieve the filter width
+      /*!
+       * The output of this function is only valid once subcomplete() has been
+       * called.
+       *
+       * @return  Current filter width of device
+       * @date    September 3, 2015
+       * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+       */
+      filter_t filter() const { return m_filter; }
 
       //! Make a command object
       /*!
@@ -93,9 +113,9 @@ namespace Icom
        * @date    September 4, 2015
        * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
        */
-      static GetFrequency* make(const Device& dev)
+      static GetMode* make(const Device& dev)
       {
-         return new GetFrequency(dev);
+         return new GetMode(dev);
       }
        
    private:
@@ -105,42 +125,53 @@ namespace Icom
        * @date    September 2, 2015
        * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
        */
-      GetFrequency(const Device& dev);
+      GetMode(const Device& dev);
 
-      static const uint8_t code=0x03;  //!< Command code
+      static const uint8_t code=0x04;  //!< Command code
+
+      mode_t m_mode;  //!< Operating mode
+      filter_t m_filter;  //!< filter_t width
    };
 
-   //! Set the operating frequency of an %Icom CI-V device
+   //! Set the operating mode of an %Icom CI-V device
    /*!
     * @date    September 4, 2015
     * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
     */
-   class SetFrequency: public Frequency
+   class SetMode: public Command_base
    {
    public:
       //! Make a command object
       /*!
        * @param   [in] dev The %Icom Device in question
-       * @param   [in] frequency The desired operating frequency
+       * @param   [in] mode The desired operating mode
+       * @param   [in] filter The desired filter width
        * @date    September 4, 2015
        * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
        */
-      static SetFrequency* make(const Device& dev, unsigned int frequency)
+      static SetMode* make(
+            const Device& dev,
+            mode_t mode,
+            filter_t filter)
       {
-         return new SetFrequency(dev, frequency);
+         return new SetMode(dev, mode, filter);
       }
        
    private:
       //! Construct the command object
       /*!
        * @param   [in] dev The %Icom Device in question
-       * @param   [in] frequency The desired operating frequency
+       * @param   [in] mode The desired operating mode
+       * @param   [in] filter The desired filter width
        * @date    September 4, 2015
        * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
        */
-      SetFrequency(const Device& dev, unsigned int frequency);
+      SetMode(
+            const Device& dev,
+            mode_t mode,
+            filter_t filter);
 
-      static const uint8_t code=0x00;  //!< Command code
+      static const uint8_t code=0x06;  //!< Command code
    };
 }
 

@@ -37,7 +37,7 @@
 namespace Icom
 {
    //! Container type for command and result buffers
-   typedef std::vector<unsigned char> Buffer;
+   typedef std::vector<uint8_t> Buffer;
 
    //! Enumeration for indicating command status
    enum Status {INCOMPLETE, FAIL, PARSEERROR, SUCCESS};
@@ -85,8 +85,8 @@ namespace Icom
 
       virtual ~Command_base() {}
 
-      static const unsigned char footer=0xfd;
-      static const unsigned char header=0xfe;
+      static const uint8_t footer=0xfd;
+      static const uint8_t header=0xfe;
       static const size_t bufferReserveSize=64;
       const Device device;  //!< Target %Icom device
 

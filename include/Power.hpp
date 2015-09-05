@@ -1,6 +1,6 @@
 /*!
- * @file       Device.hpp
- * @brief      Declares the Icom::Device class
+ * @file       Power.hpp
+ * @brief      Declares the classes for turning an %Icom device on or off
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
  * @date       September 4, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
@@ -25,37 +25,53 @@
  * The %Icom CI-V Control Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DEVICE_HPP
-#define DEVICE_HPP
+#ifndef POWER_HPP
+#define POWER_HPP
 
-#include <string>
-#include <array>
-#include <algorithm>
-
-#define STRING_TO_ENUM(NAME) inline NAME ## _t NAME ## FromName(std::string name) { const NAME ## Names_t::const_iterator it = std::find(NAME ## Names.cbegin(), NAME ## Names.cend(), name); if(it == NAME ## Names.cend()) throw; return (NAME ## _t)(it - NAME ## Names.cbegin()); }
+#include "Command.hpp"
 
 //! Contains all elements for controlling %Icom devices
 namespace Icom
 {
-   //! Enumeration for indicating command status
-   enum model_t: uint8_t
+   enum powerState_t: uint8_t
    {
-         ICR9500
+      OFF   = 0x00,
+      ON    = 0x01
    };
+   typedef std::array<std::string, 2> powerStateNames_t;
+   extern const powerStateNames_t powerStateNames;
+   STRING_TO_ENUM(powerState)
 
-   typedef std::array<std::string, 1> modelNames_t;
-   extern const modelNames_t modelNames;
-   STRING_TO_ENUM(model)
-
-   //! Structure for representing an %Icom device
+   //! Base class for handling operating frequencies
    /*!
     * @date    September 4, 2015
     * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
     */
-   struct Device
+   class Power: public Command_base
    {
-      model_t model;      //!< model_t of device
-      uint8_t address;  //!< CI-V address of device
+   public:
+      //! Make a command object
+      /*!
+       * @param   [in] dev The %Icom Device in question
+       * @param   [in] state Do we want it on or off?
+       * @date    September 4, 2015
+       * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+       */
+      static Power* make(const Device& dev, powerState_t state)
+      {
+         return new Power(dev, state);
+      }
+   private:
+      //! Construct the command object
+      /*!
+       * @param   [in] dev The %Icom Device in question
+       * @param   [in] state Do we want it on or off?
+       * @date    September 4, 2015
+       * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+       */
+      Power(const Device& dev, powerState_t state);
+
+      static const uint8_t code=0x18;  //!< Command code
    };
 }
 

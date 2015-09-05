@@ -35,7 +35,7 @@
 Icom::Controller::Controller(
       const std::string& port,
       unsigned int baudRate,
-      unsigned char address):
+      uint8_t address):
    m_fd(-1),
    m_address(address)
 {
@@ -141,7 +141,7 @@ void Icom::Controller::execute(Command& command) const
          // Get the reply
          notForUs=false;
          unsigned int state=0;
-         unsigned char buffer;
+         uint8_t buffer;
          command->resultData().clear();
          while(state<5)
          {
@@ -182,9 +182,9 @@ void Icom::Controller::execute(Command& command) const
    } while(notForUs || !command->complete());
 }
 
-unsigned char Icom::Controller::get() const
+uint8_t Icom::Controller::get() const
 {
-   unsigned char x;
+   uint8_t x;
    ssize_t n=0;
    while(n==0)
       n = read(m_fd, &x, 1);
@@ -209,7 +209,7 @@ void Icom::Controller::put(const Buffer data) const
    }
 }
 
-void Icom::Controller::put(const unsigned char byte) const
+void Icom::Controller::put(const uint8_t byte) const
 {
    ssize_t n=0;
    while(n==0)

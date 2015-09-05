@@ -11,14 +11,23 @@
 #include "Device.hpp"
 #include "Controller.hpp"
 #include "Frequency.hpp"
+#include "Power.hpp"
+#include "Mode.hpp"
 
-enum Command {
-   FREQUENCY
+enum command_t {
+   FREQUENCY,
+   POWER,
+   MODE
 };
 
-typedef std::array<std::string, 1> CommandStrings;
-const CommandStrings commandStrings = {
-      "frequency"};
+typedef std::array<std::string, 3> commandNames_t;
+const commandNames_t commandNames = {
+      "frequency",
+      "power",
+      "mode"
+};
+
+STRING_TO_ENUM(command)
 
 class InvalidCommand: public std::exception
 {
@@ -86,20 +95,13 @@ int main(int argc, char *argv[])
       arguments.pop_front();
 
       // Second should be the device name
-      const Icom::ModelNames::const_iterator modelName = std::find(
-            Icom::modelNames.cbegin(),
-            Icom::modelNames.cend(),
-            arguments.front());
+      const Icom::model_t model = Icom::modelFromName(arguments.front());
       arguments.pop_front();
-      if(modelName == Icom::modelNames.cend())
-         throw;
-      const Icom::Model model =
-         (Icom::Model)(modelName-Icom::modelNames.cbegin());
 
       // Third should be the device address
       if(arguments.front().size() != 2)
          throw;
-      const unsigned char deviceAddress = (unsigned char)std::stoul(
+      const uint8_t deviceAddress = (uint8_t)std::stoul(
             arguments.front(),
             0,
             16);
@@ -109,12 +111,7 @@ int main(int argc, char *argv[])
       const Icom::Device device({model, deviceAddress});
 
       // Fourth should be our command
-      const Command commandID = (Command)(
-            std::find(
-               commandStrings.cbegin(),
-               commandStrings.cend(),
-               arguments.front())
-            -commandStrings.cbegin());
+      const command_t commandID = commandFromName(arguments.front());
       arguments.pop_front();
 
       Icom::Command command;
@@ -155,6 +152,57 @@ int main(int argc, char *argv[])
                break;
             }
          }
+
+         case POWER:
+            command.reset(Icom::Power::make(
+                     device,
+                     Icom::powerStateFromName(arguments.front())));
+            arguments.pop_front();
+            break;
+
+         case MODE:            
+         {
+            if(!arguments.size())
+            {
+               command.reset(Icom::GetMode::make(device));
+               const Icom::GetMode& getmode_t=
+                  *static_cast<const Icom::GetMode*>(command.get());
+
+               controller.execute(command);
+               switch(command->status())
+               {
+                  case Icom::SUCCESS:
+                     std::cout << Icom::modeNames[(uint8_t)getmode_t.mode()]
+                               << '\n'
+                               << Icom::filterNames[(uint8_t)getmode_t.filter()]
+                               << std::endl;
+                     break;
+                  case Icom::PARSEERROR:
+                     throw CommandParseError(command->resultData());
+
+                  case Icom::INCOMPLETE:
+                     throw CommandIncomplete();
+
+                  case Icom::FAIL:
+                     throw CommandFailed();
+               }
+               return 0;
+            }
+            else if(arguments.size()==1 || arguments.size()==2)
+            {
+               const Icom::mode_t mode=Icom::modeFromName(arguments.front());
+               arguments.pop_front();
+               Icom::filter_t filter(Icom::filter_t::NONE);
+               if(arguments.size())
+               {
+                  filter=Icom::filterFromName(arguments.front());
+                  arguments.pop_front();
+               }
+               command.reset(Icom::SetMode::make(device, mode, filter));
+               break;
+            }
+         }
+
          default:
             throw InvalidCommand();
       }

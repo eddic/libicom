@@ -52,7 +52,7 @@ namespace Icom
       Controller(
             const std::string& port,
             unsigned int baudRate=19200,
-            unsigned char address=0xe0);
+            uint8_t address=0xe0);
 
       ~Controller();
 
@@ -125,16 +125,16 @@ namespace Icom
       int m_fd;  //!< File descriptor of serial port.
 
       //! Retrieve a byte from the serial port
-      inline unsigned char get() const;
+      inline uint8_t get() const;
 
       //! Send a string of bytes down the serial port
       inline void put(const Buffer data) const;
 
       //! Send a byte down the serial port
-      inline void put(const unsigned char byte) const;
+      inline void put(const uint8_t byte) const;
 
       //! Address of controller
-      const unsigned char m_address;
+      const uint8_t m_address;
    };
 }
 
