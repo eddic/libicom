@@ -32,7 +32,7 @@
 #include <array>
 #include <algorithm>
 
-#define STRING_TO_ENUM(NAME) inline NAME ## _t NAME ## FromName(std::string name) { const NAME ## Names_t::const_iterator it = std::find(NAME ## Names.cbegin(), NAME ## Names.cend(), name); if(it == NAME ## Names.cend()) throw; return (NAME ## _t)(it - NAME ## Names.cbegin()); }
+#define STRING_TO_ENUM(NAME) inline NAME ## _t NAME ## FromName(const std::string& name) { const NAME ## Names_t::const_iterator it = std::find(NAME ## Names.cbegin(), NAME ## Names.cend(), name); if(it == NAME ## Names.cend()) throw; return (NAME ## _t)(it - NAME ## Names.cbegin()); }
 
 //! Contains all elements for controlling %Icom devices
 namespace Icom

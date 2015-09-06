@@ -13,18 +13,21 @@
 #include "Frequency.hpp"
 #include "Power.hpp"
 #include "Mode.hpp"
+#include "VFO.hpp"
 
 enum command_t {
    FREQUENCY,
    POWER,
-   MODE
+   MODE,
+   VFO
 };
 
-typedef std::array<std::string, 3> commandNames_t;
+typedef std::array<std::string, 4> commandNames_t;
 const commandNames_t commandNames = {
       "frequency",
       "power",
-      "mode"
+      "mode",
+      "vfo"
 };
 
 STRING_TO_ENUM(command)
@@ -199,6 +202,22 @@ int main(int argc, char *argv[])
                   arguments.pop_front();
                }
                command.reset(Icom::SetMode::make(device, mode, filter));
+               break;
+            }
+         }
+
+         case VFO:
+         {
+            if(!arguments.size())
+            {
+               command.reset(Icom::VFO::make(device));
+               break;
+            }
+            else if(arguments.size()==1)
+            {
+               command.reset(Icom::VFO::make(
+                        device,
+                        Icom::vfoStateFromName(arguments.front())));
                break;
             }
          }
