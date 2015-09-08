@@ -9,7 +9,7 @@
 #include <sstream>
 
 #include "libicom/device.hpp"
-#include "Controller.hpp"
+#include "libicom/controller.hpp"
 #include "Frequency.hpp"
 #include "Power.hpp"
 #include "Mode.hpp"

@@ -1,5 +1,5 @@
 /*!
- * @file       Controller.hpp
+ * @file       controller.hpp
  * @brief      Declares the Icom::Controller class
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
  * @date       September 8, 2015
@@ -38,7 +38,7 @@ namespace Icom
 {
    //! Class for representing an %Icom CI-V controller
    /*!
-    * @date    September 4, 2015
+    * @date    September 8, 2015
     * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
     */
    class Controller
@@ -65,6 +65,7 @@ namespace Icom
        */
       void execute(Command& command) const;
 
+      //! Error indicating failure to open serial port
       class CantOpenPort: public std::exception
       {
          const char* what() const throw()
@@ -73,6 +74,7 @@ namespace Icom
          }
       };
 
+      //! Error indicating that the port is not a tty
       class PortNotTTY: public std::exception
       {
          const char* what() const throw()
@@ -81,6 +83,7 @@ namespace Icom
          }
       };
 
+      //! Error indicating that we've been passed an invalid baud rate
       class InvalidBaudRate: public std::exception
       {
          const char* what() const throw()
@@ -89,6 +92,7 @@ namespace Icom
          }
       };
 
+      //! Error indicating that we've received an invalid reply over the CI-V bus
       class InvalidReply: public std::exception
       {
          const char* what() const throw()
@@ -97,6 +101,7 @@ namespace Icom
          }
       };
 
+      //! Error indicating that our receive buffer has overflown before getting a footer
       class BufferOverflow: public std::exception
       {
          const char* what() const throw()
@@ -105,6 +110,7 @@ namespace Icom
          }
       };
 
+      //! We got a system error trying to write to the serial port
       class WriteError: public std::exception
       {
          const char* what() const throw()
@@ -113,6 +119,7 @@ namespace Icom
          }
       };
 
+      //! We got a system error trying to read from the serial port
       class ReadError: public std::exception
       {
          const char* what() const throw()
