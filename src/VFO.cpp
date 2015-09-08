@@ -1,8 +1,8 @@
 /*!
  * @file       VFO.cpp
- * @brief      Defines the classes for turning an %Icom device on or off
+ * @brief      Defines classes for selecting and modifying %VFO mode
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date       September 6, 2015
+ * @date       September 8, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
  *             under the GNU General Public License Version 3.
  */
@@ -27,7 +27,7 @@
 
 #include "VFO.hpp"
 
-Icom::VFO::VFO(const Device& dev, vfoState_t state):
+Icom::VFO::VFO(const device_t& dev, vfoState_t state):
    Command_base(dev)
 {
    m_command.push_back(code);
@@ -36,24 +36,16 @@ Icom::VFO::VFO(const Device& dev, vfoState_t state):
 
 const Icom::vfoStateNames_t Icom::vfoStateNames =
 {
-   "VFO-0",
-   "VFO-1",
-   "VFO-2",
-   "VFO-3",
-   "VFO-4",
-   "VFO-5",
-   "VFO-6",
-   "VFO-7",
-   "VFO-8",
-   "VFO-9",
-   "","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",
+   "VFO-A",
+   "VFO-B",
+   "","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",
    "swap",
    "","","","","","","","","","","","","","","",
    "single",
    "dual"
 };
 
-Icom::VFO::VFO(const Device& dev):
+Icom::VFO::VFO(const device_t& dev):
    Command_base(dev)
 {
    m_command.push_back(code);

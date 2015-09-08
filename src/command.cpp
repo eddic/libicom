@@ -27,7 +27,7 @@
 
 #include "libicom/command.hpp"
 
-Icom::Command_base::Command_base(const Device& dev, bool reply):
+Icom::Command_base::Command_base(const device_t& dev, bool reply):
    device(dev),
    m_reply(reply),
    m_status(INCOMPLETE)

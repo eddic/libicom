@@ -1,6 +1,6 @@
 /*!
  * @file       VFO.hpp
- * @brief      Declares the classes for turning an %Icom device on or off
+ * @brief      Declares classes for selecting and modifying %VFO mode
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
  * @date       September 8, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
@@ -35,16 +35,8 @@ namespace Icom
 {
    enum vfoState_t: uint8_t
    {
-      VFO0     = 0x00,
-      VFO1     = 0x01,
-      VFO2     = 0x02,
-      VFO3     = 0x03,
-      VFO4     = 0x04,
-      VFO5     = 0x05,
-      VFO6     = 0x06,
-      VFO7     = 0x07,
-      VFO8     = 0x08,
-      VFO9     = 0x09,
+      VFOA     = 0x00,
+      VFOB     = 0x01,
       SWAP     = 0xb0,
       SINGLE   = 0xc0,
       DUAL     = 0xc1
@@ -55,7 +47,7 @@ namespace Icom
 
    //! Base class selecting or configuring VFO mode
    /*!
-    * @date    September 6, 2015
+    * @date    September 8, 2015
     * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
     */
    class VFO: public Command_base
@@ -63,43 +55,43 @@ namespace Icom
    public:
       //! Make a command object to set the %VFO state
       /*!
-       * @param   [in] dev The %Icom Device in question
+       * @param   [in] dev The %Icom device in question
        * @param   [in] state What state do we want to put the %VFO in?
-       * @date    September 6, 2015
+       * @date    September 8, 2015
        * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
        */
-      static VFO* make(const Device& dev, vfoState_t state)
+      static VFO* make(const device_t& dev, vfoState_t state)
       {
          return new VFO(dev, state);
       }
 
       //! Make a command object to select %VFO mode
       /*!
-       * @param   [in] dev The %Icom Device in question
-       * @date    September 6, 2015
+       * @param   [in] dev The %Icom device in question
+       * @date    September 8, 2015
        * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
        */
-      static VFO* make(const Device& dev)
+      static VFO* make(const device_t& dev)
       {
          return new VFO(dev);
       }
    private:
       //! Construct the command object to set the %VFO state
       /*!
-       * @param   [in] dev The %Icom Device in question
+       * @param   [in] dev The %Icom device in question
        * @param   [in] state What state do we want to put the %VFO in?
-       * @date    September 6, 2015
+       * @date    September 8, 2015
        * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
        */
-      VFO(const Device& dev, vfoState_t state);
+      VFO(const device_t& dev, vfoState_t state);
 
       //! Construct the command object to select %VFO mode
       /*!
-       * @param   [in] dev The %Icom Device in question
-       * @date    September 6, 2015
+       * @param   [in] dev The %Icom device in question
+       * @date    September 8, 2015
        * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
        */
-      VFO(const Device& dev);
+      VFO(const device_t& dev);
 
       static const uint8_t code=0x07;  //!< Command code
    };

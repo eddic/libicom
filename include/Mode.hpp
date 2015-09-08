@@ -1,5 +1,5 @@
 /*!
- * @file       mode_t.hpp
+ * @file       Mode.hpp
  * @brief      Declares the classes for setting/getting the operating
  *             mode of an %Icom device.
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
@@ -68,7 +68,7 @@ namespace Icom
 
    //! Retrieve the operating mode of an %Icom CI-V device
    /*!
-    * @date    September 4, 2015
+    * @date    September 8, 2015
     * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
     */
    class GetMode: public Command_base
@@ -109,11 +109,11 @@ namespace Icom
 
       //! Make a command object
       /*!
-       * @param   [in] dev The %Icom Device in question
-       * @date    September 4, 2015
+       * @param   [in] dev The %Icom device in question
+       * @date    September 8, 2015
        * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
        */
-      static GetMode* make(const Device& dev)
+      static GetMode* make(const device_t& dev)
       {
          return new GetMode(dev);
       }
@@ -121,11 +121,11 @@ namespace Icom
    private:
       //! Construct the command object
       /*!
-       * @param   [in] Device The %Icom Device in question
-       * @date    September 2, 2015
+       * @param   [in] dev The %Icom device in question
+       * @date    September 8, 2015
        * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
        */
-      GetMode(const Device& dev);
+      GetMode(const device_t& dev);
 
       static const uint8_t code=0x04;  //!< Command code
 
@@ -135,7 +135,7 @@ namespace Icom
 
    //! Set the operating mode of an %Icom CI-V device
    /*!
-    * @date    September 4, 2015
+    * @date    September 8, 2015
     * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
     */
    class SetMode: public Command_base
@@ -143,14 +143,14 @@ namespace Icom
    public:
       //! Make a command object
       /*!
-       * @param   [in] dev The %Icom Device in question
+       * @param   [in] dev The %Icom device in question
        * @param   [in] mode The desired operating mode
        * @param   [in] filter The desired filter width
-       * @date    September 4, 2015
+       * @date    September 8, 2015
        * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
        */
       static SetMode* make(
-            const Device& dev,
+            const device_t& dev,
             mode_t mode,
             filter_t filter)
       {
@@ -160,14 +160,14 @@ namespace Icom
    private:
       //! Construct the command object
       /*!
-       * @param   [in] dev The %Icom Device in question
+       * @param   [in] dev The %Icom device in question
        * @param   [in] mode The desired operating mode
        * @param   [in] filter The desired filter width
-       * @date    September 4, 2015
+       * @date    September 8, 2015
        * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
        */
       SetMode(
-            const Device& dev,
+            const device_t& dev,
             mode_t mode,
             filter_t filter);
 

@@ -1,6 +1,6 @@
 /*!
  * @file       Power.hpp
- * @brief      Declares the classes for turning an %Icom device on or off
+ * @brief      Declares the class for turning an %Icom device on or off
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
  * @date       September 8, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
@@ -42,9 +42,9 @@ namespace Icom
    extern const powerStateNames_t powerStateNames;
    STRING_TO_ENUM(powerState)
 
-   //! Base class for handling operating frequencies
+   //! Class for turning an %Icom device on or off
    /*!
-    * @date    September 4, 2015
+    * @date    September 8, 2015
     * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
     */
    class Power: public Command_base
@@ -52,24 +52,24 @@ namespace Icom
    public:
       //! Make a command object
       /*!
-       * @param   [in] dev The %Icom Device in question
+       * @param   [in] dev The %Icom device in question
        * @param   [in] state Do we want it on or off?
-       * @date    September 4, 2015
+       * @date    September 8, 2015
        * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
        */
-      static Power* make(const Device& dev, powerState_t state)
+      static Power* make(const device_t& dev, powerState_t state)
       {
          return new Power(dev, state);
       }
    private:
       //! Construct the command object
       /*!
-       * @param   [in] dev The %Icom Device in question
+       * @param   [in] dev The %Icom device in question
        * @param   [in] state Do we want it on or off?
-       * @date    September 4, 2015
+       * @date    September 8, 2015
        * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
        */
-      Power(const Device& dev, powerState_t state);
+      Power(const device_t& dev, powerState_t state);
 
       static const uint8_t code=0x18;  //!< Command code
    };

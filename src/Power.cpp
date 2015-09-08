@@ -1,8 +1,8 @@
 /*!
  * @file       Power.cpp
- * @brief      Defines the classes for turning an %Icom device on or off
+ * @brief      Defines the class for turning an %Icom device on or off
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date       September 4, 2015
+ * @date       September 8, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
  *             under the GNU General Public License Version 3.
  */
@@ -27,7 +27,7 @@
 
 #include "Power.hpp"
 
-Icom::Power::Power(const Device& dev, powerState_t state):
+Icom::Power::Power(const device_t& dev, powerState_t state):
    Command_base(dev)
 {
    m_command.push_back(code);

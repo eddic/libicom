@@ -8,7 +8,7 @@
 #include <locale>
 #include <sstream>
 
-#include "Device.hpp"
+#include "libicom/device.hpp"
 #include "Controller.hpp"
 #include "Frequency.hpp"
 #include "Power.hpp"
@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
       arguments.pop_front();
 
       // Now we make the device object
-      const Icom::Device device({model, deviceAddress});
+      const Icom::device_t device({model, deviceAddress});
 
       // Fourth should be our command
       const command_t commandID = commandFromName(arguments.front());

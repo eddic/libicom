@@ -50,25 +50,16 @@ bool Icom::GetFrequency::subcomplete()
    return true;
 }
 
-Icom::Frequency::Frequency(
-      const Device& dev,
-      unsigned int freq,
-      bool reply):
-   Command_base(dev, reply),
-   m_frequency(freq)
-{
-}
-
-Icom::GetFrequency::GetFrequency(const Device& dev):
-   Frequency(dev, 0)
+Icom::GetFrequency::GetFrequency(const device_t& dev):
+   Command_base(dev, true)
 {
    m_command.push_back(code);
 }
 
-Icom::SetFrequency::SetFrequency(const Device& dev, unsigned int frequency):
-   Frequency(dev, frequency, false)
+Icom::SetFrequency::SetFrequency(const device_t& dev, unsigned int frequency):
+   Command_base(dev, false)
 {
    m_command.resize(6);
    m_command.front() = code;
-   putBCD(m_command.begin()+1, m_command.end(), m_frequency);
+   putBCD(m_command.begin()+1, m_command.end(), frequency);
 }

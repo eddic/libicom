@@ -31,7 +31,7 @@
 #include <vector>
 #include <memory>
 
-#include "Device.hpp"
+#include "libicom/device.hpp"
 
 //! Contains all elements for controlling %Icom devices
 namespace Icom
@@ -88,7 +88,7 @@ namespace Icom
       static const uint8_t footer=0xfd;  //!< Byte indicating message end
       static const uint8_t header=0xfe;  //!< Byte indicating message start
       static const size_t bufferReserveSize=64;  //!< Size of command/result buffer reserve
-      const Device device;  //!< Target %Icom device
+      const device_t device;  //!< Target %Icom device
 
       //! Initiate completion
       /*!
@@ -126,12 +126,12 @@ namespace Icom
 
       //! Sole constructor
       /*!
-       * @param   [in] dev The %Icom %Device in question
+       * @param   [in] dev The %Icom %device_t in question
        * @param   [in] reply Should we expect a reply?
-       * @date    September 3, 2015
+       * @date    September 8, 2015
        * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
        */
-      Command_base(const Device& dev, bool reply=true);
+      Command_base(const device_t& dev, bool reply=true);
 
       Status m_status;   //!< Current status of command
       Buffer m_command;  //!< Buffer with command data

@@ -1,8 +1,8 @@
 /*!
- * @file       Device.hpp
- * @brief      Declares the Icom::Device class
+ * @file       device.hpp
+ * @brief      Declares classes for defining %Icom devices
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date       September 4, 2015
+ * @date       September 8, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
  *             under the GNU General Public License Version 3.
  */
@@ -40,7 +40,7 @@ namespace Icom
    //! Enumeration for indicating command status
    enum model_t: uint8_t
    {
-         ICR9500
+      ICR9500
    };
 
    typedef std::array<std::string, 1> modelNames_t;
@@ -49,12 +49,12 @@ namespace Icom
 
    //! Structure for representing an %Icom device
    /*!
-    * @date    September 4, 2015
+    * @date    September 8, 2015
     * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
     */
-   struct Device
+   struct device_t
    {
-      model_t model;      //!< model_t of device
+      model_t model;    //!< model_t of device
       uint8_t address;  //!< CI-V address of device
    };
 }

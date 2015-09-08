@@ -1,8 +1,8 @@
 /*!
- * @file       mode_t.cpp
+ * @file       Mode.cpp
  * @brief      Defines classes for %Icom device operating modes
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date       September 4, 2015
+ * @date       September 8, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
  *             under the GNU General Public License Version 3.
  */
@@ -60,14 +60,14 @@ bool Icom::GetMode::subcomplete()
    return true;
 }
 
-Icom::GetMode::GetMode(const Device& dev):
+Icom::GetMode::GetMode(const device_t& dev):
    Command_base(dev)
 {
    m_command.push_back(code);
 }
 
 Icom::SetMode::SetMode(
-      const Device& dev,
+      const device_t& dev,
       mode_t mode,
       filter_t filter):
    Command_base(dev)

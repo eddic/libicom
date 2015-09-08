@@ -1,8 +1,8 @@
 /*!
- * @file       Device.cpp
- * @brief      Defines the Icom::Device class
+ * @file       device.cpp
+ * @brief      Defines classes for defining %Icom devices
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date       September 4, 2015
+ * @date       September 8, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
  *             under the GNU General Public License Version 3.
  */
@@ -25,7 +25,9 @@
  * The %Icom CI-V Control Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Device.hpp"
+#include "libicom/device.hpp"
 
-const Icom::modelNames_t Icom::modelNames = {
-      "IC-R9500"};
+const Icom::modelNames_t Icom::modelNames =
+{
+   "IC-R9500"
+};
