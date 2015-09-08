@@ -1,8 +1,8 @@
 /*!
- * @file       getBCD.cpp
- * @brief      Defines the Icom::getBCD function
+ * @file       bcd.cpp
+ * @brief      Defines functions for handling binary coded decimal
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date       September 4, 2015
+ * @date       September 8, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
  *             under the GNU General Public License Version 3.
  */
@@ -25,7 +25,7 @@
  * The %Icom CI-V Control Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "BCD.hpp"
+#include "bcd.hpp"
 
 uint64_t Icom::getBCD(
       const Buffer::const_iterator start,

@@ -1,8 +1,8 @@
 /*!
- * @file       BCD.hpp
+ * @file       bcd.hpp
  * @brief      Declares functions for handling binary coded decimal
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date       September 4, 2015
+ * @date       September 8, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
  *             under the GNU General Public License Version 3.
  */
