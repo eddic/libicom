@@ -1,8 +1,8 @@
 /*!
- * @file       Command.hpp
- * @brief      Declares the Icom::Command class
+ * @file       command.hpp
+ * @brief      Declares a base class for handling CI-V commands
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date       September 4, 2015
+ * @date       September 8, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
  *             under the GNU General Public License Version 3.
  */
@@ -42,12 +42,12 @@ namespace Icom
    //! Enumeration for indicating command status
    enum Status {INCOMPLETE, FAIL, PARSEERROR, SUCCESS};
 
-   //! Base class for any %Icom CI-V commands
+   //! Base class for handling %Icom CI-V commands
    /*!
     * This class should be derived from to implement any %Icom CI-V control
     * commands.
     *
-    * @date    September 4, 2015
+    * @date    September 8, 2015
     * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
     */
    class Command_base
@@ -85,20 +85,20 @@ namespace Icom
 
       virtual ~Command_base() {}
 
-      static const uint8_t footer=0xfd;
-      static const uint8_t header=0xfe;
-      static const size_t bufferReserveSize=64;
+      static const uint8_t footer=0xfd;  //!< Byte indicating message end
+      static const uint8_t header=0xfe;  //!< Byte indicating message start
+      static const size_t bufferReserveSize=64;  //!< Size of command/result buffer reserve
       const Device device;  //!< Target %Icom device
 
       //! Initiate completion
       /*!
-       * Calling this function forces the class to process the result
-       * data buffer. Normally just return "true".
+       * Calling this function forces the class to process the result data
+       * buffer. Normally just returns "true".
        *
-       * We also use this function for commands that may require
-       * multiple executions before they are actually complete. One example of
-       * this being useful is for polling the squelch status of the receiver
-       * and not being "done" until it is either open or close.
+       * We also use this function for commands that may require multiple
+       * executions before they are actually complete. One example of this
+       * being useful is for polling the squelch status of the receiver and not
+       * being "done" until it is either open or close.
        *
        * @return  "false" if command should be run again. "true" otherwise.
        * @date    September 4, 2015
@@ -126,16 +126,15 @@ namespace Icom
 
       //! Sole constructor
       /*!
-       * @param   [in] dev The %Icom Device in question
+       * @param   [in] dev The %Icom %Device in question
        * @param   [in] reply Should we expect a reply?
        * @date    September 3, 2015
        * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
        */
       Command_base(const Device& dev, bool reply=true);
 
-      Status m_status;                    //!< Current status of command
-
-      Buffer m_command;  //!< Buffer with actual command data
+      Status m_status;   //!< Current status of command
+      Buffer m_command;  //!< Buffer with command data
       Buffer m_result;   //!< Buffer with command result
    };
 

@@ -28,7 +28,7 @@
 #ifndef BCD_HPP
 #define BCD_HPP
 
-#include "Command.hpp"
+#include "libicom/command.hpp"
 
 //! Contains all elements for controlling %Icom devices
 namespace Icom

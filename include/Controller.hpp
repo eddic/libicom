@@ -2,7 +2,7 @@
  * @file       Controller.hpp
  * @brief      Declares the Icom::Controller class
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date       September 4, 2015
+ * @date       September 8, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
  *             under the GNU General Public License Version 3.
  */
@@ -31,7 +31,7 @@
 #include <exception>
 #include <string>
 
-#include "Command.hpp"
+#include "libicom/command.hpp"
 
 //! Contains all elements for controlling %Icom devices
 namespace Icom

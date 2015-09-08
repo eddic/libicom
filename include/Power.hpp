@@ -2,7 +2,7 @@
  * @file       Power.hpp
  * @brief      Declares the classes for turning an %Icom device on or off
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date       September 4, 2015
+ * @date       September 8, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
  *             under the GNU General Public License Version 3.
  */
@@ -28,7 +28,7 @@
 #ifndef POWER_HPP
 #define POWER_HPP
 
-#include "Command.hpp"
+#include "libicom/command.hpp"
 
 //! Contains all elements for controlling %Icom devices
 namespace Icom

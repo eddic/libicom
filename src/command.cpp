@@ -2,7 +2,7 @@
  * @file       Command.cpp
  * @brief      Defines the Icom::Command class
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date       September 4, 2015
+ * @date       September 8, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
  *             under the GNU General Public License Version 3.
  */
@@ -25,7 +25,7 @@
  * The %Icom CI-V Control Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Command.hpp"
+#include "libicom/command.hpp"
 
 Icom::Command_base::Command_base(const Device& dev, bool reply):
    device(dev),
