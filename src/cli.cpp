@@ -14,20 +14,23 @@
 #include "libicom/power.hpp"
 #include "libicom/mode.hpp"
 #include "libicom/vfo.hpp"
+#include "libicom/duplex.hpp"
 
 enum command_t {
    FREQUENCY,
    POWER,
    MODE,
-   VFO
+   VFO,
+   DUPLEX
 };
 
-typedef std::array<std::string, 4> commandNames_t;
+typedef std::array<std::string, 5> commandNames_t;
 const commandNames_t commandNames = {
-      "frequency",
-      "power",
-      "mode",
-      "vfo"
+   "frequency",
+   "power",
+   "mode",
+   "vfo",
+   "duplex"
 };
 
 STRING_TO_ENUM(command)
@@ -218,6 +221,41 @@ int main(int argc, char *argv[])
                command.reset(Icom::VFO::make(
                         device,
                         Icom::vfoStateFromName(arguments.front())));
+               break;
+            }
+         }
+
+         case DUPLEX:
+         {
+            if(!arguments.size())
+            {
+               command.reset(Icom::GetDuplex::make(device));
+               const Icom::GetDuplex& getDuplex=
+                  *static_cast<const Icom::GetDuplex*>(command.get());
+
+               controller.execute(command);
+               switch(command->status())
+               {
+                  case Icom::SUCCESS:
+                     std::cout << std::fixed
+                               << getDuplex.offset()
+                               << std::endl;
+                     break;
+                  case Icom::PARSEERROR:
+                     throw CommandParseError(command->resultData());
+
+                  case Icom::INCOMPLETE:
+                     throw CommandIncomplete();
+
+                  case Icom::FAIL:
+                     throw CommandFailed();
+               }
+               return 0;
+            }
+            else if(arguments.size()==1)
+            {
+               const int offset=std::stoi(arguments.front());
+               command.reset(Icom::SetDuplex::make(device, offset));
                break;
             }
          }
