@@ -1,8 +1,8 @@
 /*!
- * @file       VFO.hpp
- * @brief      Declares classes for selecting and modifying %VFO mode
+ * @file       power.hpp
+ * @brief      Declares the class for turning an %Icom device on or off
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date       September 8, 2015
+ * @date       September 21, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
  *             under the GNU General Public License Version 3.
  */
@@ -25,75 +25,53 @@
  * The %Icom CI-V Control Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VFO_HPP
-#define VFO_HPP
+#ifndef POWER_HPP
+#define POWER_HPP
 
 #include "libicom/command.hpp"
 
 //! Contains all elements for controlling %Icom devices
 namespace Icom
 {
-   enum vfoState_t: uint8_t
+   enum powerState_t: uint8_t
    {
-      VFOA     = 0x00,
-      VFOB     = 0x01,
-      SWAP     = 0xb0,
-      SINGLE   = 0xc0,
-      DUAL     = 0xc1
+      OFF   = 0x00,
+      ON    = 0x01
    };
-   typedef std::array<std::string, 0xc2> vfoStateNames_t;
-   extern const vfoStateNames_t vfoStateNames;
-   STRING_TO_ENUM(vfoState)
+   typedef std::array<std::string, 2> powerStateNames_t;
+   extern const powerStateNames_t powerStateNames;
+   STRING_TO_ENUM(powerState)
 
-   //! Base class selecting or configuring VFO mode
+   //! Class for turning an %Icom device on or off
    /*!
     * @date    September 8, 2015
     * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
     */
-   class VFO: public Command_base
+   class Power: public Command_base
    {
    public:
-      //! Make a command object to set the %VFO state
+      //! Make a command object
       /*!
        * @param   [in] dev The %Icom device in question
-       * @param   [in] state What state do we want to put the %VFO in?
+       * @param   [in] state Do we want it on or off?
        * @date    September 8, 2015
        * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
        */
-      static VFO* make(const device_t& dev, vfoState_t state)
+      static Power* make(const device_t& dev, powerState_t state)
       {
-         return new VFO(dev, state);
-      }
-
-      //! Make a command object to select %VFO mode
-      /*!
-       * @param   [in] dev The %Icom device in question
-       * @date    September 8, 2015
-       * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-       */
-      static VFO* make(const device_t& dev)
-      {
-         return new VFO(dev);
+         return new Power(dev, state);
       }
    private:
-      //! Construct the command object to set the %VFO state
+      //! Construct the command object
       /*!
        * @param   [in] dev The %Icom device in question
-       * @param   [in] state What state do we want to put the %VFO in?
+       * @param   [in] state Do we want it on or off?
        * @date    September 8, 2015
        * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
        */
-      VFO(const device_t& dev, vfoState_t state);
+      Power(const device_t& dev, powerState_t state);
 
-      //! Construct the command object to select %VFO mode
-      /*!
-       * @param   [in] dev The %Icom device in question
-       * @date    September 8, 2015
-       * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-       */
-      VFO(const device_t& dev);
-
-      static const uint8_t code=0x07;  //!< Command code
+      static const uint8_t code=0x18;  //!< Command code
    };
 }
 

@@ -11,9 +11,9 @@
 #include "libicom/device.hpp"
 #include "libicom/controller.hpp"
 #include "libicom/frequency.hpp"
-#include "Power.hpp"
+#include "libicom/power.hpp"
 #include "libicom/mode.hpp"
-#include "VFO.hpp"
+#include "libicom/vfo.hpp"
 
 enum command_t {
    FREQUENCY,

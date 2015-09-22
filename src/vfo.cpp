@@ -1,8 +1,8 @@
 /*!
- * @file       Power.cpp
- * @brief      Defines the class for turning an %Icom device on or off
+ * @file       vfo.cpp
+ * @brief      Defines classes for selecting and modifying %VFO mode
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date       September 8, 2015
+ * @date       September 21, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
  *             under the GNU General Public License Version 3.
  */
@@ -25,13 +25,30 @@
  * The %Icom CI-V Control Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Power.hpp"
+#include "libicom/vfo.hpp"
 
-Icom::Power::Power(const device_t& dev, powerState_t state):
+Icom::VFO::VFO(const device_t& dev, vfoState_t state):
    Command_base(dev)
 {
    m_command.push_back(code);
    m_command.push_back((uint8_t)state);
 }
 
-const Icom::powerStateNames_t Icom::powerStateNames = { "on", "off" };
+const Icom::vfoStateNames_t Icom::vfoStateNames =
+{
+   "VFO-A",
+   "VFO-B",
+   "","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",
+   "swap",
+   "","","","","","","","","","","","","","","",
+   "single",
+   "dual"
+};
+
+Icom::VFO::VFO(const device_t& dev):
+   Command_base(dev)
+{
+   m_command.push_back(code);
+}
+
+const uint8_t Icom::VFO::code;
