@@ -1,8 +1,9 @@
 /*!
  * @file       Mode.cpp
- * @brief      Defines classes for %Icom device operating modes
+ * @brief      Defines the classes for setting/getting the operating
+ *             mode of an %Icom device.
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date       September 8, 2015
+ * @date       September 21, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
  *             under the GNU General Public License Version 3.
  */
@@ -27,7 +28,7 @@
 
 #include <limits>
 
-#include "Mode.hpp"
+#include "libicom/mode.hpp"
 
 bool Icom::GetMode::subcomplete()
 {

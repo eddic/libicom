@@ -12,7 +12,7 @@
 #include "libicom/controller.hpp"
 #include "libicom/frequency.hpp"
 #include "Power.hpp"
-#include "Mode.hpp"
+#include "libicom/mode.hpp"
 #include "VFO.hpp"
 
 enum command_t {
