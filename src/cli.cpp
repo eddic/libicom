@@ -10,7 +10,7 @@
 
 #include "libicom/device.hpp"
 #include "libicom/controller.hpp"
-#include "Frequency.hpp"
+#include "libicom/frequency.hpp"
 #include "Power.hpp"
 #include "Mode.hpp"
 #include "VFO.hpp"
