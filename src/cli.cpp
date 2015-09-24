@@ -15,22 +15,25 @@
 #include "libicom/mode.hpp"
 #include "libicom/vfo.hpp"
 #include "libicom/duplex.hpp"
+#include "libicom/squelch.hpp"
 
 enum command_t {
    FREQUENCY,
    POWER,
    MODE,
    VFO,
-   DUPLEX
+   DUPLEX,
+   SQUELCHHOLD
 };
 
-typedef std::array<std::string, 5> commandNames_t;
+typedef std::array<std::string, 6> commandNames_t;
 const commandNames_t commandNames = {
    "frequency",
    "power",
    "mode",
    "vfo",
-   "duplex"
+   "duplex",
+   "squelchHold"
 };
 
 STRING_TO_ENUM(command)
@@ -257,6 +260,33 @@ int main(int argc, char *argv[])
                const int offset=std::stoi(arguments.front());
                command.reset(Icom::SetDuplex::make(device, offset));
                break;
+            }
+         }
+
+         case SQUELCHHOLD:
+         {
+            if(arguments.size() == 1)
+            {
+               command.reset(Icom::SquelchHold::make(
+                        device,
+                        Icom::squelchStateFromName(arguments.front())
+                        ));
+               controller.execute(command);
+               switch(command->status())
+               {
+                  case Icom::SUCCESS:
+                     std::cout << "Squelch is now " << arguments.front() << ".\n";
+                     break;
+                  case Icom::PARSEERROR:
+                     throw CommandParseError(command->resultData());
+
+                  case Icom::INCOMPLETE:
+                     throw CommandIncomplete();
+
+                  case Icom::FAIL:
+                     throw CommandFailed();
+               }
+               return 0;
             }
          }
 
