@@ -30,37 +30,37 @@
 
 bool Icom::SquelchHold::subcomplete()
 {
-   if(m_result.size() == 3 &&
-         m_result[0] == code &&
-         m_result[1] == subCode)
-   {
-      if(m_squelchState == (squelchState_t)m_result[2])
-      {
-         m_status=SUCCESS;
-         return true;
-      }
-   }
-   else
-   {
-      m_status=PARSEERROR;
-      return true;
-   }
+    if(m_result.size() == 3 &&
+            m_result[0] == code &&
+            m_result[1] == subCode)
+    {
+        if(m_squelchState == (squelchState_t)m_result[2])
+        {
+            m_status=SUCCESS;
+            return true;
+        }
+    }
+    else
+    {
+        m_status=PARSEERROR;
+        return true;
+    }
 
-   return false;
+    return false;
 }
 
 const uint8_t Icom::SquelchHold::code;
 const uint8_t Icom::SquelchHold::subCode;
 
 Icom::SquelchHold::SquelchHold(const device_t& dev, squelchState_t state):
-   Command_base(dev),
-   m_squelchState(state)
+    Command_base(dev),
+    m_squelchState(state)
 {
-   m_command.resize(3);
-   m_command[0] = code;
-   m_command[1] = subCode;
+    m_command.resize(3);
+    m_command[0] = code;
+    m_command[1] = subCode;
 }
 
 const Icom::squelchStateNames_t Icom::squelchStateNames = {
-      "closed",
-      "open"};
+        "closed",
+        "open"};

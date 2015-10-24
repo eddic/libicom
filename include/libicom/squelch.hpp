@@ -34,59 +34,59 @@
 //! Contains all elements for controlling %Icom devices
 namespace Icom
 {
-   enum squelchState_t: uint8_t
-   {
-      CLOSED = 0x00,
-      OPEN   = 0x01
-   };
-   typedef std::array<std::string, 2> squelchStateNames_t;
-   extern const squelchStateNames_t squelchStateNames;
-   STRING_TO_ENUM(squelchState)
+    enum squelchState_t: uint8_t
+    {
+        CLOSED = 0x00,
+        OPEN   = 0x01
+    };
+    typedef std::array<std::string, 2> squelchStateNames_t;
+    extern const squelchStateNames_t squelchStateNames;
+    STRING_TO_ENUM(squelchState)
 
-   //! Wait for the squelch of an %Icom CI-V device to change
-   /*!
-    * @date    September 23, 2015
-    * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-    */
-   class SquelchHold: public Command_base
-   {
-   public:
-      //! Make a command object
-      /*!
-       * @param   [in] dev The %Icom device in question
-       * @param   [in] state The state we should wait for the squelch to be.
-       * @date    September 23, 2015
-       * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-       */
-      static SquelchHold* make(const device_t& dev, squelchState_t state)
-      {
-         return new SquelchHold(dev, state);
-      }
-   private:
-      //! Construct the command object
-      /*!
-       * @param   [in] dev The %Icom device in question
-       * @param   [in] state The state we should wait for the squelch to be.
-       * @date    September 23, 2015
-       * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-       */
-      SquelchHold(const device_t& dev, squelchState_t state);
+    //! Wait for the squelch of an %Icom CI-V device to change
+    /*!
+     * @date    September 23, 2015
+     * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+     */
+    class SquelchHold: public Command_base
+    {
+    public:
+        //! Make a command object
+        /*!
+         * @param   [in] dev The %Icom device in question
+         * @param   [in] state The state we should wait for the squelch to be.
+         * @date    September 23, 2015
+         * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+         */
+        static SquelchHold* make(const device_t& dev, squelchState_t state)
+        {
+            return new SquelchHold(dev, state);
+        }
+    private:
+        //! Construct the command object
+        /*!
+         * @param   [in] dev The %Icom device in question
+         * @param   [in] state The state we should wait for the squelch to be.
+         * @date    September 23, 2015
+         * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+         */
+        SquelchHold(const device_t& dev, squelchState_t state);
 
-      //! Complete the command
-      /*!
-       * Returns false until the squelch changes to the specified state
-       *
-       * @return  Always true.
-       * @date    September 23, 2015
-       * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-       */
-      bool subcomplete();
+        //! Complete the command
+        /*!
+         * Returns false until the squelch changes to the specified state
+         *
+         * @return  Always true.
+         * @date    September 23, 2015
+         * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+         */
+        bool subcomplete();
 
-      const squelchState_t m_squelchState;
+        const squelchState_t m_squelchState;
 
-      static const uint8_t code=0x15;  //!< Command code
-      static const uint8_t subCode=0x01;  //!< Subcommand code
-   };
+        static const uint8_t code=0x15;  //!< Command code
+        static const uint8_t subCode=0x01;  //!< Subcommand code
+    };
 }
 
 #endif

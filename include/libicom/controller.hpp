@@ -36,113 +36,113 @@
 //! Contains all elements for controlling %Icom devices
 namespace Icom
 {
-   //! Class for representing an %Icom CI-V controller
-   /*!
-    * @date    September 8, 2015
-    * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-    */
-   class Controller
-   {
-   public:
-      //! Sole constructor
-      /*!
-       * @param   [in] port The string representation of the serial port.
-       * @param   [in] baudrate The baud rate to operate the serial port at.
-       */
-      Controller(
-            const std::string& port,
-            unsigned int baudRate=19200,
-            uint8_t address=0xe0);
+    //! Class for representing an %Icom CI-V controller
+    /*!
+     * @date    September 8, 2015
+     * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+     */
+    class Controller
+    {
+    public:
+        //! Sole constructor
+        /*!
+         * @param   [in] port The string representation of the serial port.
+         * @param   [in] baudrate The baud rate to operate the serial port at.
+         */
+        Controller(
+                const std::string& port,
+                unsigned int baudRate=19200,
+                uint8_t address=0xe0);
 
-      ~Controller();
+        ~Controller();
 
-      //! Synchronously execute a command
-      /*!
-       * This returns once the command has completed its execution. The commands
-       * result and status are set following this.
-       *
-       * @param   [inout] command The Command to execute.
-       */
-      void execute(Command& command) const;
+        //! Synchronously execute a command
+        /*!
+         * This returns once the command has completed its execution. The
+         * commands result and status are set following this.
+         *
+         * @param   [inout] command The Command to execute.
+         */
+        void execute(Command& command) const;
 
-      //! Error indicating failure to open serial port
-      class CantOpenPort: public std::exception
-      {
-         const char* what() const throw()
-         {
-            return "Unable to open serial port.";
-         }
-      };
+        //! Error indicating failure to open serial port
+        class CantOpenPort: public std::exception
+        {
+            const char* what() const throw()
+            {
+                return "Unable to open serial port.";
+            }
+        };
 
-      //! Error indicating that the port is not a tty
-      class PortNotTTY: public std::exception
-      {
-         const char* what() const throw()
-         {
-            return "Serial port is not a tty.";
-         }
-      };
+        //! Error indicating that the port is not a tty
+        class PortNotTTY: public std::exception
+        {
+            const char* what() const throw()
+            {
+                return "Serial port is not a tty.";
+            }
+        };
 
-      //! Error indicating that we've been passed an invalid baud rate
-      class InvalidBaudRate: public std::exception
-      {
-         const char* what() const throw()
-         {
-            return "Invalid baud rate.";
-         }
-      };
+        //! Error indicating that we've been passed an invalid baud rate
+        class InvalidBaudRate: public std::exception
+        {
+            const char* what() const throw()
+            {
+                return "Invalid baud rate.";
+            }
+        };
 
-      //! Error indicating that we've received an invalid reply over the CI-V bus
-      class InvalidReply: public std::exception
-      {
-         const char* what() const throw()
-         {
-            return "Invalid reply from device.";
-         }
-      };
+        //! Error indicating that we've received an invalid reply over the CI-V bus
+        class InvalidReply: public std::exception
+        {
+            const char* what() const throw()
+            {
+                return "Invalid reply from device.";
+            }
+        };
 
-      //! Error indicating that our receive buffer has overflown before getting a footer
-      class BufferOverflow: public std::exception
-      {
-         const char* what() const throw()
-         {
-            return "Receive buffer would overflow.";
-         }
-      };
+        //! Error indicating that our receive buffer has overflown before getting a footer
+        class BufferOverflow: public std::exception
+        {
+            const char* what() const throw()
+            {
+                return "Receive buffer would overflow.";
+            }
+        };
 
-      //! We got a system error trying to write to the serial port
-      class WriteError: public std::exception
-      {
-         const char* what() const throw()
-         {
-            return "Error writing to serial port.";
-         }
-      };
+        //! We got a system error trying to write to the serial port
+        class WriteError: public std::exception
+        {
+            const char* what() const throw()
+            {
+                return "Error writing to serial port.";
+            }
+        };
 
-      //! We got a system error trying to read from the serial port
-      class ReadError: public std::exception
-      {
-         const char* what() const throw()
-         {
-            return "Error reading from serial port.";
-         }
-      };
+        //! We got a system error trying to read from the serial port
+        class ReadError: public std::exception
+        {
+            const char* what() const throw()
+            {
+                return "Error reading from serial port.";
+            }
+        };
 
-   private:
-      int m_fd;  //!< File descriptor of serial port.
+    private:
+        int m_fd;  //!< File descriptor of serial port.
 
-      //! Retrieve a byte from the serial port
-      inline uint8_t get() const;
+        //! Retrieve a byte from the serial port
+        inline uint8_t get() const;
 
-      //! Send a string of bytes down the serial port
-      inline void put(const Buffer data) const;
+        //! Send a string of bytes down the serial port
+        inline void put(const Buffer data) const;
 
-      //! Send a byte down the serial port
-      inline void put(const uint8_t byte) const;
+        //! Send a byte down the serial port
+        inline void put(const uint8_t byte) const;
 
-      //! Address of controller
-      const uint8_t m_address;
-   };
+        //! Address of controller
+        const uint8_t m_address;
+    };
 }
 
 #endif

@@ -29,5 +29,5 @@
 
 const Icom::modelNames_t Icom::modelNames =
 {
-   "IC-R9500"
+    "IC-R9500"
 };

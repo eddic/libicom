@@ -28,10 +28,10 @@
 #include "libicom/power.hpp"
 
 Icom::Power::Power(const device_t& dev, powerState_t state):
-   Command_base(dev)
+    Command_base(dev)
 {
-   m_command.push_back(code);
-   m_command.push_back((uint8_t)state);
+    m_command.push_back(code);
+    m_command.push_back((uint8_t)state);
 }
 
 const Icom::powerStateNames_t Icom::powerStateNames = { "on", "off" };

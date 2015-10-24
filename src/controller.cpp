@@ -33,187 +33,187 @@
 #include <sys/ioctl.h>
 
 Icom::Controller::Controller(
-      const std::string& port,
-      unsigned int baudRate,
-      uint8_t address):
-   m_fd(-1),
-   m_address(address)
+        const std::string& port,
+        unsigned int baudRate,
+        uint8_t address):
+    m_fd(-1),
+    m_address(address)
 {
-   m_fd = open(port.c_str(), O_RDWR | O_NOCTTY | O_NDELAY);
-   if(m_fd == -1)
-      throw CantOpenPort();
+    m_fd = open(port.c_str(), O_RDWR | O_NOCTTY | O_NDELAY);
+    if(m_fd == -1)
+        throw CantOpenPort();
 
-   fcntl(m_fd, F_SETFL, 0);
-   if (!isatty(m_fd))
-   {
-      close(m_fd);
-      m_fd=-1;
-      throw PortNotTTY();
-   }
-   
-   // Configure serial port options
-   struct termios options;
-   tcgetattr(m_fd, &options);
+    fcntl(m_fd, F_SETFL, 0);
+    if (!isatty(m_fd))
+    {
+        close(m_fd);
+        m_fd=-1;
+        throw PortNotTTY();
+    }
+    
+    // Configure serial port options
+    struct termios options;
+    tcgetattr(m_fd, &options);
 
-   // Set serial port speed
-   speed_t rate=B0;
-   switch(baudRate)
-   {
-      case 300:
-         rate=B300;
-         break;
-      case 1200:
-         rate=B1200;
-         break;
-      case 2400:
-         rate=B2400;
-         break;
-      case 4800:
-         rate=B4800;
-         break;
-      case 9600:
-         rate=B9600;
-         break;
-      case 19200:
-         rate=B19200;
-         break;
-      default:
-         InvalidBaudRate();
-   }
-   cfsetispeed(&options, rate);
-   cfsetospeed(&options, rate);
+    // Set serial port speed
+    speed_t rate=B0;
+    switch(baudRate)
+    {
+        case 300:
+            rate=B300;
+            break;
+        case 1200:
+            rate=B1200;
+            break;
+        case 2400:
+            rate=B2400;
+            break;
+        case 4800:
+            rate=B4800;
+            break;
+        case 9600:
+            rate=B9600;
+            break;
+        case 19200:
+            rate=B19200;
+            break;
+        default:
+            InvalidBaudRate();
+    }
+    cfsetispeed(&options, rate);
+    cfsetospeed(&options, rate);
 
-   // Set serial port options
-   options.c_lflag &= ~(
-         ICANON | ECHO | ECHOE | ISIG | OPOST |  // We want raw mode
-         IXON | IXOFF | IXANY |                  // No software flow control
-         CSIZE |                                 // We set it to 8 bits below
-         PARENB |                                // No parity bits
-         CSTOPB |                                // Single stop bit
-         // CNEW_RTSCTS |                           // No hardware flow control
-         HUPCL                                   // Don't mess with the DTR
-         );
-   options.c_cflag |= (CLOCAL | CREAD | CS8 | IGNPAR);
-   options.c_cc[VTIME] = 2;                      // Timeout our reads in 200ms
-   options.c_cc[VMIN] = 0;
-   tcsetattr(m_fd, TCSANOW, &options);
+    // Set serial port options
+    options.c_lflag &= ~(
+            ICANON | ECHO | ECHOE | ISIG | OPOST |  // We want raw mode
+            IXON | IXOFF | IXANY |                  // No software flow control
+            CSIZE |                                 // We set it to 8 bits below
+            PARENB |                                // No parity bits
+            CSTOPB |                                // Single stop bit
+            // CNEW_RTSCTS |                           // No hardware flow control
+            HUPCL                                   // Don't mess with the DTR
+            );
+    options.c_cflag |= (CLOCAL | CREAD | CS8 | IGNPAR);
+    options.c_cc[VTIME] = 2;                      // Timeout our reads in 200ms
+    options.c_cc[VMIN] = 0;
+    tcsetattr(m_fd, TCSANOW, &options);
 
-   // Enable the DTR
-   int lineData;
-   ioctl(m_fd, TIOCMGET, &lineData);
-   lineData |= TIOCM_DTR;
-   ioctl(m_fd, TIOCMSET, &lineData);
+    // Enable the DTR
+    int lineData;
+    ioctl(m_fd, TIOCMGET, &lineData);
+    lineData |= TIOCM_DTR;
+    ioctl(m_fd, TIOCMSET, &lineData);
 }
 
 Icom::Controller::~Controller()
 {
-   if(m_fd != -1)
-   {
-      int lineData;
-      ioctl(m_fd, TIOCMGET, &lineData);
-      lineData &= ~TIOCM_DTR;
-      ioctl(m_fd, TIOCMSET, &lineData);
-      close(m_fd);
-   }
+    if(m_fd != -1)
+    {
+        int lineData;
+        ioctl(m_fd, TIOCMGET, &lineData);
+        lineData &= ~TIOCM_DTR;
+        ioctl(m_fd, TIOCMSET, &lineData);
+        close(m_fd);
+    }
 }
 
 void Icom::Controller::execute(Command& command) const
 {
-   bool notForUs=false;
+    bool notForUs=false;
 
-   do
-   {
-      // Send the command
-      if(!notForUs)
-      {
-         const Buffer header={
-               Command_base::header,
-               Command_base::header,
-               command->device.address,
-               m_address};
-         put(header);
-         put(command->commandData());
-         put(Command_base::footer);
-      }
+    do
+    {
+        // Send the command
+        if(!notForUs)
+        {
+            const Buffer header={
+                    Command_base::header,
+                    Command_base::header,
+                    command->device.address,
+                    m_address};
+            put(header);
+            put(command->commandData());
+            put(Command_base::footer);
+        }
 
-      if(command->m_reply)
-      {
-         // Get the reply
-         notForUs=false;
-         unsigned int state=0;
-         uint8_t buffer;
-         command->resultData().clear();
-         while(state<5)
-         {
-            buffer=get();
-
-            switch(state)
+        if(command->m_reply)
+        {
+            // Get the reply
+            notForUs=false;
+            unsigned int state=0;
+            uint8_t buffer;
+            command->resultData().clear();
+            while(state<5)
             {
-               case 0:
-               case 1:
-                  if(buffer!=Command_base::header)
-                     throw InvalidReply();
-                  ++state;
-                  break;
-               case 2:
-                  if(buffer!=m_address)
-                     notForUs=true;
-                  ++state;
-                  break;
-               case 3:
-                  if(buffer!=command->device.address)
-                     notForUs=true;
-                  ++state;
-                  break;
-               case 4:
-                  if(buffer != Command_base::footer)
-                     command->resultData().push_back(buffer);
-                  else
-                     ++state;
-                  break;
+                buffer=get();
+
+                switch(state)
+                {
+                    case 0:
+                    case 1:
+                        if(buffer!=Command_base::header)
+                            throw InvalidReply();
+                        ++state;
+                        break;
+                    case 2:
+                        if(buffer!=m_address)
+                            notForUs=true;
+                        ++state;
+                        break;
+                    case 3:
+                        if(buffer!=command->device.address)
+                            notForUs=true;
+                        ++state;
+                        break;
+                    case 4:
+                        if(buffer != Command_base::footer)
+                            command->resultData().push_back(buffer);
+                        else
+                            ++state;
+                        break;
+                }
+
+                // We don't want to recieve a giant reply
+                if(command->resultData().size() >= Command_base::bufferReserveSize)
+                    throw BufferOverflow();
             }
+        }
 
-            // We don't want to recieve a giant reply
-            if(command->resultData().size() >= Command_base::bufferReserveSize)
-               throw BufferOverflow();
-         }
-      }
-
-   } while(notForUs || !command->complete());
+    } while(notForUs || !command->complete());
 }
 
 uint8_t Icom::Controller::get() const
 {
-   uint8_t x;
-   ssize_t n=0;
-   while(n==0)
-      n = read(m_fd, &x, 1);
-   if(n < 0)
-      throw ReadError();
-   return x;
+    uint8_t x;
+    ssize_t n=0;
+    while(n==0)
+        n = read(m_fd, &x, 1);
+    if(n < 0)
+        throw ReadError();
+    return x;
 }
 
 void Icom::Controller::put(const Buffer data) const
 {
-   size_t position=0;
-   ssize_t n;
-   while(position < data.size())
-   {
-      n = write(
-            m_fd, 
-            &data.front()+position,
-            data.size()-position);
-      if(n < 0)
-         throw WriteError();
-      position += n;
-   }
+    size_t position=0;
+    ssize_t n;
+    while(position < data.size())
+    {
+        n = write(
+                m_fd, 
+                &data.front()+position,
+                data.size()-position);
+        if(n < 0)
+            throw WriteError();
+        position += n;
+    }
 }
 
 void Icom::Controller::put(const uint8_t byte) const
 {
-   ssize_t n=0;
-   while(n==0)
-      n = write(m_fd, &byte, 1);
-   if(n < 0)
-      throw WriteError();
+    ssize_t n=0;
+    while(n==0)
+        n = write(m_fd, &byte, 1);
+    if(n < 0)
+        throw WriteError();
 }

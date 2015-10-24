@@ -28,29 +28,29 @@
 #include "libicom/command.hpp"
 
 Icom::Command_base::Command_base(const device_t& dev, bool reply):
-   device(dev),
-   m_reply(reply),
-   m_status(INCOMPLETE)
+    device(dev),
+    m_reply(reply),
+    m_status(INCOMPLETE)
 {
-   m_command.reserve(bufferReserveSize);
-   m_result.reserve(bufferReserveSize);
+    m_command.reserve(bufferReserveSize);
+    m_result.reserve(bufferReserveSize);
 }
 
 bool Icom::Command_base::complete()
 {
-   if(!m_reply)
-      m_status = SUCCESS;
-   else if(m_result.size() == 1)
-   {
-      switch(m_result.front())
-      {
-         case 0xfb:
-            m_status = SUCCESS;
-            return true;
-         case 0xfa:
-            m_status = FAIL;
-            return true;
-      }
-   }
-   return subcomplete();
+    if(!m_reply)
+        m_status = SUCCESS;
+    else if(m_result.size() == 1)
+    {
+        switch(m_result.front())
+        {
+            case 0xfb:
+                m_status = SUCCESS;
+                return true;
+            case 0xfa:
+                m_status = FAIL;
+                return true;
+        }
+    }
+    return subcomplete();
 }

@@ -37,26 +37,26 @@
 //! Contains all elements for controlling %Icom devices
 namespace Icom
 {
-   //! Enumeration for indicating command status
-   enum model_t: uint8_t
-   {
-      ICR9500
-   };
+    //! Enumeration for indicating command status
+    enum model_t: uint8_t
+    {
+        ICR9500
+    };
 
-   typedef std::array<std::string, 1> modelNames_t;
-   extern const modelNames_t modelNames;
-   STRING_TO_ENUM(model)
+    typedef std::array<std::string, 1> modelNames_t;
+    extern const modelNames_t modelNames;
+    STRING_TO_ENUM(model)
 
-   //! Structure for representing an %Icom device
-   /*!
-    * @date    September 8, 2015
-    * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-    */
-   struct device_t
-   {
-      model_t model;    //!< model_t of device
-      uint8_t address;  //!< CI-V address of device
-   };
+    //! Structure for representing an %Icom device
+    /*!
+     * @date    September 8, 2015
+     * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+     */
+    struct device_t
+    {
+        model_t model;    //!< model_t of device
+        uint8_t address;  //!< CI-V address of device
+    };
 }
 
 #endif

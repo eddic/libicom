@@ -33,34 +33,34 @@
 
 bool Icom::GetFrequency::subcomplete()
 {
-   m_frequency=0;
+    m_frequency=0;
 
-   if(m_result.size() && m_result.front() == code)
-   {
-      const uint64_t bigBCD = getBCD(m_result.begin()+1, m_result.end());
+    if(m_result.size() && m_result.front() == code)
+    {
+        const uint64_t bigBCD = getBCD(m_result.begin()+1, m_result.end());
 
-      if(bigBCD <= (uint64_t)(std::numeric_limits<unsigned int>::max()))
-         m_frequency = (unsigned int)bigBCD;
-   }
+        if(bigBCD <= (uint64_t)(std::numeric_limits<unsigned int>::max()))
+            m_frequency = (unsigned int)bigBCD;
+    }
 
-   if(m_frequency)
-      m_status=SUCCESS;
-   else
-      m_status=PARSEERROR;
+    if(m_frequency)
+        m_status=SUCCESS;
+    else
+        m_status=PARSEERROR;
 
-   return true;
+    return true;
 }
 
 Icom::GetFrequency::GetFrequency(const device_t& dev):
-   Command_base(dev, true)
+    Command_base(dev, true)
 {
-   m_command.push_back(code);
+    m_command.push_back(code);
 }
 
 Icom::SetFrequency::SetFrequency(const device_t& dev, unsigned int frequency):
-   Command_base(dev, false)
+    Command_base(dev, false)
 {
-   m_command.resize(6);
-   m_command.front() = code;
-   putBCD(m_command.begin()+1, m_command.end(), frequency);
+    m_command.resize(6);
+    m_command.front() = code;
+    putBCD(m_command.begin()+1, m_command.end(), frequency);
 }

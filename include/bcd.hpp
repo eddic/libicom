@@ -33,29 +33,29 @@
 //! Contains all elements for controlling %Icom devices
 namespace Icom
 {
-   //! Extract a binary coded decimal number from a string of bytes
-   /*!
-    * @param   [in] start Iterator to the start of the data
-    * @param   [in] end Iterator to the end of the data
-    * @date    September 4, 2015
-    * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-    */
-   uint64_t getBCD(
-         const Buffer::const_iterator start,
-         const Buffer::const_iterator end);
+    //! Extract a binary coded decimal number from a string of bytes
+    /*!
+     * @param   [in] start Iterator to the start of the data
+     * @param   [in] end Iterator to the end of the data
+     * @date    September 4, 2015
+     * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+     */
+    uint64_t getBCD(
+            const Buffer::const_iterator start,
+            const Buffer::const_iterator end);
 
-   //! Insert a binary coded decimal number into a string of bytes
-   /*!
-    * @param   [out] start Iterator to data start
-    * @param   [out] start Iterator to data end
-    * @param   [in] number Number to convert to %BCD
-    * @date    September 4, 2015
-    * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-    */
-   void putBCD(
-         const Buffer::iterator start,
-         const Buffer::iterator end,
-         uint64_t number);
+    //! Insert a binary coded decimal number into a string of bytes
+    /*!
+     * @param   [out] start Iterator to data start
+     * @param   [out] start Iterator to data end
+     * @param   [in] number Number to convert to %BCD
+     * @date    September 4, 2015
+     * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+     */
+    void putBCD(
+            const Buffer::iterator start,
+            const Buffer::iterator end,
+            uint64_t number);
 }
 
 #endif

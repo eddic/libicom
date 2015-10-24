@@ -36,110 +36,110 @@
 //! Contains all elements for controlling %Icom devices
 namespace Icom
 {
-   //! Container type for command and result buffers
-   typedef std::vector<uint8_t> Buffer;
+    //! Container type for command and result buffers
+    typedef std::vector<uint8_t> Buffer;
 
-   //! Enumeration for indicating command status
-   enum Status {INCOMPLETE, FAIL, PARSEERROR, SUCCESS};
+    //! Enumeration for indicating command status
+    enum Status {INCOMPLETE, FAIL, PARSEERROR, SUCCESS};
 
-   //! Base class for handling %Icom CI-V commands
-   /*!
-    * This class should be derived from to implement any %Icom CI-V control
-    * commands.
-    *
-    * @date    September 8, 2015
-    * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-    */
-   class Command_base
-   {
-   public:
-      //! Retrieve command buffer
-      /*!
-       * @return  Constant reference command data buffer.
-       * @date    September 1, 2015
-       * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-       */
-      const Buffer& commandData() const
-      {
-         return m_command;
-      }
+    //! Base class for handling %Icom CI-V commands
+    /*!
+     * This class should be derived from to implement any %Icom CI-V control
+     * commands.
+     *
+     * @date    September 8, 2015
+     * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+     */
+    class Command_base
+    {
+    public:
+        //! Retrieve command buffer
+        /*!
+         * @return  Constant reference command data buffer.
+         * @date    September 1, 2015
+         * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+         */
+        const Buffer& commandData() const
+        {
+            return m_command;
+        }
 
-      //! Retrieve buffer for command result data
-      /*!
-       * @return  Reference to command result data buffer.
-       * @date    September 1, 2015
-       * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-       */
-      Buffer& resultData()
-      {
-         return m_result;
-      }
+        //! Retrieve buffer for command result data
+        /*!
+         * @return  Reference to command result data buffer.
+         * @date    September 1, 2015
+         * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+         */
+        Buffer& resultData()
+        {
+            return m_result;
+        }
 
-      //! Check status of command
-      /*!
-       * @return  Current status of command
-       * @date    September 1, 2015
-       * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-       */
-      Status status() const { return m_status; }
+        //! Check status of command
+        /*!
+         * @return  Current status of command
+         * @date    September 1, 2015
+         * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+         */
+        Status status() const { return m_status; }
 
-      virtual ~Command_base() {}
+        virtual ~Command_base() {}
 
-      static const uint8_t footer=0xfd;  //!< Byte indicating message end
-      static const uint8_t header=0xfe;  //!< Byte indicating message start
-      static const size_t bufferReserveSize=64;  //!< Size of command/result buffer reserve
-      const device_t device;  //!< Target %Icom device
+        static const uint8_t footer=0xfd;  //!< Byte indicating message end
+        static const uint8_t header=0xfe;  //!< Byte indicating message start
+        static const size_t bufferReserveSize=64;  //!< Size of command/result buffer reserve
+        const device_t device;  //!< Target %Icom device
 
-      //! Initiate completion
-      /*!
-       * Calling this function forces the class to process the result data
-       * buffer. Normally just returns "true".
-       *
-       * We also use this function for commands that may require multiple
-       * executions before they are actually complete. One example of this
-       * being useful is for polling the squelch status of the receiver and not
-       * being "done" until it is either open or close.
-       *
-       * @return  "false" if command should be run again. "true" otherwise.
-       * @date    September 4, 2015
-       * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-       */
-      bool complete();
+        //! Initiate completion
+        /*!
+         * Calling this function forces the class to process the result data
+         * buffer. Normally just returns "true".
+         *
+         * We also use this function for commands that may require multiple
+         * executions before they are actually complete. One example of this
+         * being useful is for polling the squelch status of the receiver and
+         * not being "done" until it is either open or close.
+         *
+         * @return  "false" if command should be run again. "true" otherwise.
+         * @date    September 4, 2015
+         * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+         */
+        bool complete();
 
-      const bool m_reply;
-   protected:
-      //! %Command specific completion
-      /*!
-       * Calling this function forces the child class to process the result
-       * data buffer. Normally just return "true".
-       *
-       * We also use this virtual function for commands that may require
-       * multiple executions before they are actually complete. One example of
-       * this being useful is for polling the squelch status of the receiver
-       * and not being "done" until it is either open or close.
-       *
-       * @return  "false" if command should be run again. "true" otherwise.
-       * @date    September 4, 2015
-       * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-       */
-      virtual bool subcomplete() { return true; }
+        const bool m_reply;
+    protected:
+        //! %Command specific completion
+        /*!
+         * Calling this function forces the child class to process the result
+         * data buffer. Normally just return "true".
+         *
+         * We also use this virtual function for commands that may require
+         * multiple executions before they are actually complete. One example
+         * of this being useful is for polling the squelch status of the
+         * receiver and not being "done" until it is either open or close.
+         *
+         * @return  "false" if command should be run again. "true" otherwise.
+         * @date    September 4, 2015
+         * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+         */
+        virtual bool subcomplete() { return true; }
 
-      //! Sole constructor
-      /*!
-       * @param   [in] dev The %Icom %device_t in question
-       * @param   [in] reply Should we expect a reply?
-       * @date    September 8, 2015
-       * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-       */
-      Command_base(const device_t& dev, bool reply=true);
+        //! Sole constructor
+        /*!
+         * @param   [in] dev The %Icom %device_t in question
+         * @param   [in] reply Should we expect a reply?
+         * @date    September 8, 2015
+         * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+         */
+        Command_base(const device_t& dev, bool reply=true);
 
-      Status m_status;   //!< Current status of command
-      Buffer m_command;  //!< Buffer with command data
-      Buffer m_result;   //!< Buffer with command result
-   };
+        Status m_status;   //!< Current status of command
+        Buffer m_command;  //!< Buffer with command data
+        Buffer m_result;   //!< Buffer with command result
+    };
 
-   //! Shared pointer holder for commands.
-   typedef std::shared_ptr<Command_base> Command;
+    //! Shared pointer holder for commands.
+    typedef std::shared_ptr<Command_base> Command;
 }
 
 #endif

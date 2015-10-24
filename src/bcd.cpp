@@ -28,50 +28,50 @@
 #include "bcd.hpp"
 
 uint64_t Icom::getBCD(
-      const Buffer::const_iterator start,
-      const Buffer::const_iterator end)
+        const Buffer::const_iterator start,
+        const Buffer::const_iterator end)
 {
-   if(end-start>10)
-      return 0;
+    if(end-start>10)
+        return 0;
 
-   uint64_t number=0;
-   uint64_t multiplier=1;
-   uint64_t digit;
+    uint64_t number=0;
+    uint64_t multiplier=1;
+    uint64_t digit;
 
-   for(Buffer::const_iterator byte=start; byte != end; ++byte)
-   {
-      digit = (*byte&0x0f);
-      if(digit>9)
-         return 0;
-      number += digit*(multiplier);
-      multiplier *= 10;
-      
-      digit = (*byte>>4);
-      if(digit>9)
-         return 0;
-      number += digit*(multiplier);
-      multiplier *= 10;
-   }
+    for(Buffer::const_iterator byte=start; byte != end; ++byte)
+    {
+        digit = (*byte&0x0f);
+        if(digit>9)
+            return 0;
+        number += digit*(multiplier);
+        multiplier *= 10;
+        
+        digit = (*byte>>4);
+        if(digit>9)
+            return 0;
+        number += digit*(multiplier);
+        multiplier *= 10;
+    }
 
-   return number;
+    return number;
 }
 
 void Icom::putBCD(
-      const Buffer::iterator start,
-      const Buffer::iterator end,
-      uint64_t number)
+        const Buffer::iterator start,
+        const Buffer::iterator end,
+        uint64_t number)
 {
-   uint64_t divider=10;
-   unsigned char digit;
+    uint64_t divider=10;
+    unsigned char digit;
 
-   for(Buffer::iterator byte=start; byte!=end; ++byte)
-   {
-      digit = (unsigned char)(number%10);
-      *byte = digit&0x0f;
-      number /= divider;
+    for(Buffer::iterator byte=start; byte!=end; ++byte)
+    {
+        digit = (unsigned char)(number%10);
+        *byte = digit&0x0f;
+        number /= divider;
 
-      digit = (unsigned char)(number%10);
-      *byte |= digit<<4;
-      number /= divider;
-   }
+        digit = (unsigned char)(number%10);
+        *byte |= digit<<4;
+        number /= divider;
+    }
 }

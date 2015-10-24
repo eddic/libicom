@@ -34,37 +34,37 @@
 
 bool Icom::GetDuplex::subcomplete()
 {
-   if(m_result.size() == 4 && m_result.front() == code)
-   {
-      m_offset = (unsigned int)getBCD(m_result.begin()+1, m_result.end());
-      m_status=SUCCESS;
-   }
-   else
-      m_status=PARSEERROR;
+    if(m_result.size() == 4 && m_result.front() == code)
+    {
+        m_offset = (unsigned int)getBCD(m_result.begin()+1, m_result.end());
+        m_status=SUCCESS;
+    }
+    else
+        m_status=PARSEERROR;
 
-   return true;
+    return true;
 }
 
 Icom::GetDuplex::GetDuplex(const device_t& dev):
-   Command_base(dev)
+    Command_base(dev)
 {
-   m_command.push_back(code);
+    m_command.push_back(code);
 }
 
 Icom::SetDuplex::SetDuplex(
-      const device_t& dev,
-      int offset):
-   Command_base(dev),
-   m_started(false),
-   m_offset(offset)
+        const device_t& dev,
+        int offset):
+    Command_base(dev),
+    m_started(false),
+    m_offset(offset)
 {
-   m_command.push_back(mode_code);
-   if(offset==0)
-      m_command.push_back(0x10);
-   else if(offset < 0)
-      m_command.push_back(0x11);
-   else
-      m_command.push_back(0x12);
+    m_command.push_back(mode_code);
+    if(offset==0)
+        m_command.push_back(0x10);
+    else if(offset < 0)
+        m_command.push_back(0x11);
+    else
+        m_command.push_back(0x12);
 }
 
 const uint8_t Icom::GetDuplex::code;
@@ -73,23 +73,23 @@ const uint8_t Icom::SetDuplex::offset_code;
 
 bool Icom::SetDuplex::subcomplete()
 {
-   if(!m_started)
-   {
-      if(m_offset)
-      {
-         m_command.resize(4);
-         m_command.front()=offset_code;
-         putBCD(m_command.begin()+1, m_command.end(), std::abs(m_offset));
-         m_started = true;
-         return false;
-      }
-      else
-      {
-         m_started=SUCCESS;
-         return true;
-      }
-   }
-   
-   m_started=SUCCESS;
-   return true;
+    if(!m_started)
+    {
+        if(m_offset)
+        {
+            m_command.resize(4);
+            m_command.front()=offset_code;
+            putBCD(m_command.begin()+1, m_command.end(), std::abs(m_offset));
+            m_started = true;
+            return false;
+        }
+        else
+        {
+            m_started=SUCCESS;
+            return true;
+        }
+    }
+    
+    m_started=SUCCESS;
+    return true;
 }

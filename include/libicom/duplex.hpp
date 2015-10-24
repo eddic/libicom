@@ -34,114 +34,114 @@
 //! Contains all elements for controlling %Icom devices
 namespace Icom
 {
-   //! Retrieve the duplex offset of an %Icom CI-V device
-   /*!
-    * @date    September 21, 2015
-    * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-    */
-   class GetDuplex: public Command_base
-   {
-   public:
-      //! Complete the command
-      /*!
-       * Calling this function forces the child class to process the result data
-       * buffer into the actual duplex offset.
-       *
-       * @return  Always true.
-       * @date    September 21, 2015
-       * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-       */
-      bool subcomplete();
+    //! Retrieve the duplex offset of an %Icom CI-V device
+    /*!
+     * @date    September 21, 2015
+     * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+     */
+    class GetDuplex: public Command_base
+    {
+    public:
+        //! Complete the command
+        /*!
+         * Calling this function forces the child class to process the result data
+         * buffer into the actual duplex offset.
+         *
+         * @return  Always true.
+         * @date    September 21, 2015
+         * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+         */
+        bool subcomplete();
 
-      //! Retrieve the duplex offset
-      /*!
-       * The output of this function is only valid once subcomplete() has been
-       * called.
-       *
-       * @return  Current duplex offset of device
-       * @date    September 21, 2015
-       * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-       */
-      int offset() const { return m_offset; }
+        //! Retrieve the duplex offset
+        /*!
+         * The output of this function is only valid once subcomplete() has been
+         * called.
+         *
+         * @return  Current duplex offset of device
+         * @date    September 21, 2015
+         * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+         */
+        int offset() const { return m_offset; }
 
-      //! Make a command object
-      /*!
-       * @param   [in] dev The %Icom device in question
-       * @date    September 21, 2015
-       * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-       */
-      static GetDuplex* make(const device_t& dev)
-      {
-         return new GetDuplex(dev);
-      }
-       
-   private:
-      //! Construct the command object
-      /*!
-       * @param   [in] dev The %Icom device in question
-       * @date    September 21, 2015
-       * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-       */
-      GetDuplex(const device_t& dev);
+        //! Make a command object
+        /*!
+         * @param   [in] dev The %Icom device in question
+         * @date    September 21, 2015
+         * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+         */
+        static GetDuplex* make(const device_t& dev)
+        {
+            return new GetDuplex(dev);
+        }
+         
+    private:
+        //! Construct the command object
+        /*!
+         * @param   [in] dev The %Icom device in question
+         * @date    September 21, 2015
+         * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+         */
+        GetDuplex(const device_t& dev);
 
-      static const uint8_t code=0x0c;  //!< Command code
+        static const uint8_t code=0x0c;  //!< Command code
 
-      int m_offset;  //!< Duplex offset
-   };
+        int m_offset;  //!< Duplex offset
+    };
 
-   //! Set the operating duplex of an %Icom CI-V device
-   /*!
-    * @date    September 21, 2015
-    * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-    */
-   class SetDuplex: public Command_base
-   {
-   public:
-      //! Make a command object
-      /*!
-       * @param   [in] dev The %Icom device in question
-       * @param   [in] offset The desired duplex offset. Zero to disable.
-       * @date    September 21, 2015
-       * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-       */
-      static SetDuplex* make(
-            const device_t& dev,
-            int offset)
-      {
-         return new SetDuplex(dev, offset);
-      }
+    //! Set the operating duplex of an %Icom CI-V device
+    /*!
+     * @date    September 21, 2015
+     * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+     */
+    class SetDuplex: public Command_base
+    {
+    public:
+        //! Make a command object
+        /*!
+         * @param   [in] dev The %Icom device in question
+         * @param   [in] offset The desired duplex offset. Zero to disable.
+         * @date    September 21, 2015
+         * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+         */
+        static SetDuplex* make(
+                const device_t& dev,
+                int offset)
+        {
+            return new SetDuplex(dev, offset);
+        }
 
-      //! Complete the command
-      /*!
-       * Calling this command loads up the second command on the first call.
-       * Returns true on the second call.
-       *
-       * @return  True on second call. False on first.
-       * @date    September 21, 2015
-       * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-       */
-      bool subcomplete();
+        //! Complete the command
+        /*!
+         * Calling this command loads up the second command on the first call.
+         * Returns true on the second call.
+         *
+         * @return  True on second call. False on first.
+         * @date    September 21, 2015
+         * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+         */
+        bool subcomplete();
 
-       
-   private:
-      //! Construct the command object
-      /*!
-       * @param   [in] dev The %Icom device in question
-       * @param   [in] offset The desired duplex offset. Zero to disable.
-       * @date    September 21, 2015
-       * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-       */
-      SetDuplex(
-            const device_t& dev,
-            int offset);
+         
+    private:
+        //! Construct the command object
+        /*!
+         * @param   [in] dev The %Icom device in question
+         * @param   [in] offset The desired duplex offset. Zero to disable.
+         * @date    September 21, 2015
+         * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+         */
+        SetDuplex(
+                const device_t& dev,
+                int offset);
 
-      static const uint8_t offset_code=0x0d; //!< Code to set offset
-      static const uint8_t mode_code=0x0f;   //!< Code to set duplex mode
+        static const uint8_t offset_code=0x0d; //!< Code to set offset
+        static const uint8_t mode_code=0x0f;   //!< Code to set duplex mode
 
-      bool m_started;
+        bool m_started;
 
-      const int m_offset;
-   };
+        const int m_offset;
+    };
 }
 
 #endif

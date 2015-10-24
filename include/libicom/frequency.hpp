@@ -34,92 +34,92 @@
 //! Contains all elements for controlling %Icom devices
 namespace Icom
 {
-   //! Retrieve the operating frequency of an %Icom CI-V device
-   /*!
-    * @date    September 8, 2015
-    * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-    */
-   class GetFrequency: public Command_base
-   {
-   public:
-      //! Complete the command
-      /*!
-       * Calling this function forces the child class to process the result data
-       * buffer into the actual operating frequency.
-       *
-       * @return  Always true.
-       * @date    September 4, 2015
-       * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-       */
-      bool subcomplete();
+    //! Retrieve the operating frequency of an %Icom CI-V device
+    /*!
+     * @date    September 8, 2015
+     * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+     */
+    class GetFrequency: public Command_base
+    {
+    public:
+        //! Complete the command
+        /*!
+         * Calling this function forces the child class to process the result
+         * data buffer into the actual operating frequency.
+         *
+         * @return  Always true.
+         * @date    September 4, 2015
+         * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+         */
+        bool subcomplete();
 
-      //! Retrieve the operating frequency
-      /*!
-       * The output of this function is only valid once subcomplete() has been
-       * called.
-       *
-       * @return  Integer representation of operating frequency in Hertz.
-       * @date    September 3, 2015
-       * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-       */
-      unsigned int result() const { return m_frequency; }
+        //! Retrieve the operating frequency
+        /*!
+         * The output of this function is only valid once subcomplete() has
+         * been called.
+         *
+         * @return  Integer representation of operating frequency in Hertz.
+         * @date    September 3, 2015
+         * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+         */
+        unsigned int result() const { return m_frequency; }
 
-      //! Make a command object
-      /*!
-       * @param   [in] dev The %Icom device in question
-       * @date    September 8, 2015
-       * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-       */
-      static GetFrequency* make(const device_t& dev)
-      {
-         return new GetFrequency(dev);
-      }
-       
-   private:
-      //! Construct the command object
-      /*!
-       * @param   [in] dev The %Icom device in question
-       * @date    September 8, 2015
-       * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-       */
-      GetFrequency(const device_t& dev);
+        //! Make a command object
+        /*!
+         * @param   [in] dev The %Icom device in question
+         * @date    September 8, 2015
+         * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+         */
+        static GetFrequency* make(const device_t& dev)
+        {
+            return new GetFrequency(dev);
+        }
+         
+    private:
+        //! Construct the command object
+        /*!
+         * @param   [in] dev The %Icom device in question
+         * @date    September 8, 2015
+         * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+         */
+        GetFrequency(const device_t& dev);
 
-      static const uint8_t code=0x03;  //!< Command code
-      unsigned int m_frequency;        //!< Retrieved operating frequency
-   };
+        static const uint8_t code=0x03;  //!< Command code
+        unsigned int m_frequency;        //!< Retrieved operating frequency
+    };
 
-   //! Set the operating frequency of an %Icom CI-V device
-   /*!
-    * @date    September 8, 2015
-    * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-    */
-   class SetFrequency: public Command_base
-   {
-   public:
-      //! Make a command object
-      /*!
-       * @param   [in] dev The %Icom device in question
-       * @param   [in] frequency The desired operating frequency
-       * @date    September 8, 2015
-       * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-       */
-      static SetFrequency* make(const device_t& dev, unsigned int frequency)
-      {
-         return new SetFrequency(dev, frequency);
-      }
-       
-   private:
-      //! Construct the command object
-      /*!
-       * @param   [in] dev The %Icom device in question
-       * @param   [in] frequency The desired operating frequency
-       * @date    September 8, 2015
-       * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-       */
-      SetFrequency(const device_t& dev, unsigned int frequency);
+    //! Set the operating frequency of an %Icom CI-V device
+    /*!
+     * @date    September 8, 2015
+     * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+     */
+    class SetFrequency: public Command_base
+    {
+    public:
+        //! Make a command object
+        /*!
+         * @param   [in] dev The %Icom device in question
+         * @param   [in] frequency The desired operating frequency
+         * @date    September 8, 2015
+         * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+         */
+        static SetFrequency* make(const device_t& dev, unsigned int frequency)
+        {
+            return new SetFrequency(dev, frequency);
+        }
+         
+    private:
+        //! Construct the command object
+        /*!
+         * @param   [in] dev The %Icom device in question
+         * @param   [in] frequency The desired operating frequency
+         * @date    September 8, 2015
+         * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+         */
+        SetFrequency(const device_t& dev, unsigned int frequency);
 
-      static const uint8_t code=0x00;  //!< Command code
-   };
+        static const uint8_t code=0x00;  //!< Command code
+    };
 }
 
 #endif
